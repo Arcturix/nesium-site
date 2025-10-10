@@ -48,17 +48,23 @@ class FormABIntegration {
     enhanceForm(form) {
         form.setAttribute('data-ab-enhanced', 'true');
         
+        console.log('🔧 Enhancing form:', form.id, form);
+        
         // Override the form submission
         const originalSubmit = form.onsubmit;
         
         form.addEventListener('submit', (e) => {
             e.preventDefault();
             
+            console.log('📝 Form submission intercepted for:', form.id);
+            
             // Get form data
             const formData = new FormData(form);
+            console.log('📋 Raw form data:', Object.fromEntries(formData));
             
             // Add A/B testing data
             const enhancedFormData = window.abTesting.trackFormSubmission(formData);
+            console.log('📋 Enhanced form data:', Object.fromEntries(enhancedFormData));
             
             // Call original form handler with enhanced data
             this.handleFormSubmission(form, enhancedFormData, originalSubmit);
@@ -85,8 +91,13 @@ class FormABIntegration {
     }
 
     handleAutomationForm(form, formData) {
+        console.log('🎯 Handling automation form submission');
+        console.log('📋 Form data received:', Object.fromEntries(formData));
+        
         // Validate required checkboxes (from original code)
         const improvements = document.querySelectorAll('input[name="improvements"]:checked');
+        console.log('✅ Checked improvements:', Array.from(improvements).map(i => i.value));
+        
         if (improvements.length === 0) {
             alert('Please select at least one area that needs improvement.');
             return;
@@ -185,6 +196,11 @@ class FormABIntegration {
         // Convert FormData to object for easier handling
         const data = Object.fromEntries(formData);
         
+        // Handle improvements array properly (checkboxes with same name)
+        if (formData.getAll && formData.getAll('improvements')) {
+            data.improvements = formData.getAll('improvements');
+        }
+        
         // Handle file upload if present
         const fileUpload = document.getElementById('file-upload');
         if (fileUpload && fileUpload.files && fileUpload.files[0]) {
@@ -209,13 +225,13 @@ class FormABIntegration {
             email: data.email || '',
             phone: data['phone-number'] || data.phone || '',
             company: data.company || '',
-            projectType: data.projectType || data.role || '',
+            projectType: data.role || data.projectType || '', // Fixed: role is the actual field name
             budget: data.budget || '',
             timeline: data.timeline || '',
-            improvements: data.improvements || '',
+            improvements: Array.isArray(data.improvements) ? data.improvements.join(', ') : (data.improvements || ''), // Fixed: handle array properly and join with commas
             customImprovement: data['custom-improvement'] || '',
-            startDate: data.startDate || data['start-date'] || '',
-            message: data.message || data.kpi || '',
+            startDate: data['start-date'] || data.startDate || '', // Fixed: start-date is the actual field name
+            message: data.kpi || data.message || '', // Fixed: kpi is the actual field name
             contactMethod: data['contact-method'] || '',
             fileName: data.fileName || '',
             fileContent: data.fileContent || '',
@@ -243,13 +259,9 @@ class FormABIntegration {
         if (window.googleSheetsIntegration && window.googleSheetsIntegration.isEnabled) {
             try {
                 console.log('🔄 Attempting to submit to Google Sheets...');
-                // Create new FormData with mapped field names
-                const mappedFormData = new FormData();
-                Object.keys(mappedData).forEach(key => {
-                    mappedFormData.append(key, mappedData[key]);
-                });
+                console.log('📋 Mapped data being sent:', mappedData);
                 
-                const sheetsResult = await window.googleSheetsIntegration.submitToGoogleSheets(mappedFormData, formType);
+                const sheetsResult = await window.googleSheetsIntegration.submitToGoogleSheets(mappedData, formType);
                 if (sheetsResult.success) {
                     console.log('✅ Data saved to Google Sheets');
                 } else {
