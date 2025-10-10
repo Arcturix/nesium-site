@@ -33,7 +33,7 @@ class GoogleSheetsIntegration {
         }
 
         try {
-            // Convert FormData to object (handle both FormData and regular objects)
+            // Handle both FormData and regular objects
             let data;
             if (formData instanceof FormData) {
                 data = Object.fromEntries(formData);
@@ -42,6 +42,8 @@ class GoogleSheetsIntegration {
             } else {
                 throw new Error('Invalid form data provided');
             }
+            
+            console.log('📋 Data being processed:', data);
             
             // Add metadata
             data.form_type = formType;
@@ -62,7 +64,8 @@ class GoogleSheetsIntegration {
             const url = `${this.webAppUrl}?${params.toString()}`;
             
             console.log('🔄 Attempting JSONP request to Google Sheets...');
-            console.log('📋 URL:', url);
+            console.log('📋 URL parameters:', params.toString());
+            console.log('📋 Full URL:', url);
             
             // Create JSONP request
             return new Promise((resolve, reject) => {
