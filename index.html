@@ -1,0 +1,1876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Nesium — Alternative Homepage</title>
+    <link rel="icon" href="/Users/jazworrell/Documents/Nesium/grid/img/favicon.ico">
+    <link rel="stylesheet" href="vendor/css/bundle.min.css">
+    <link rel="stylesheet" href="vendor/css/jquery.fancybox.min.css">
+    <style>
+        /* Reset */
+        *, *::before, *::after { box-sizing: border-box; }
+        html, body { height: 100%; }
+        body { margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; color: #0f0f0f; background: #111; }
+
+        /* Layout */
+        .page { min-height: 0; display: grid; grid-template-columns: 1fr; }
+        .hero { display: grid; grid-template-columns: 1fr; --hero-height: 60vh; --panel-radius: 32px; }
+        .panel { padding: 32px; }
+        .panel--green { background: #d6ff48; /* BRAND COLOR - Main neon accent color (change this to update brand color) */ border-radius: var(--panel-radius); }
+        .panel--image { position: relative; overflow: hidden; border-radius: var(--panel-radius); padding: 0; }
+        .hero-media { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .panel--green, .panel--image { height: var(--hero-height); }
+
+        /* Content */
+        .eyebrow { letter-spacing: 0.12em; font-size: 12px; font-weight: 600; text-transform: uppercase; opacity: 0.7; margin-bottom: 20px; }
+        /* Ensure spacing under eyebrow is visible by removing collapsing with title */
+        .panel--green .title { margin-top: 0; }
+        .title { font-size: clamp(36px, 7.5vw, 72px); line-height: 0.98; font-weight: 800; margin: 16px 0 12px; }
+        .subtitle { font-size: clamp(16px, 2.4vw, 20px); line-height: 1.5; max-width: 52ch; opacity: 0.85; margin: 12px 0 28px; }
+
+        .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+        .btn { appearance: none; border: 0; padding: 14px 20px; border-radius: 999px; font-weight: 700; cursor: pointer; transition: transform .08s ease, background .2s ease, color .2s ease; }
+        .btn:active { transform: translateY(1px); }
+        .btn-primary { background: #0f0f0f; color: #fff; }
+        .btn-primary:hover { background: #262626; }
+        .btn-ghost { background: transparent; color: #0f0f0f; border: 2px solid #0f0f0f; }
+        .btn-ghost:hover { background: rgba(15,15,15,0.08); }
+        .loss-framing { font-size: 12px; color: rgba(15,15,15,0.6); margin-top: 12px; font-weight: 500; }
+        
+        /* Hide loss framing on mobile */
+        @media (max-width: 768px) {
+            .loss-framing { display: none; }
+        }
+
+        .social-proof { display: flex; align-items: center; gap: 12px; margin-top: 20px; }
+        .avatars { display: flex; }
+        .avatar { width: 28px; height: 28px; border-radius: 999px; border: 2px solid #d6ff48; margin-left: -8px; background: #ccc; overflow: hidden; }
+        .avatar:first-child { margin-left: 0; }
+        .stars { color: #0f0f0f; font-size: 14px; letter-spacing: 1px; }
+
+        /* Badge on image */
+        .slot-badge { position: absolute; right: 16px; bottom: 16px; background: rgba(0,0,0,0.72); color: #d6ff48; padding: 10px 14px; border-radius: 999px; font-weight: 700; font-size: 12px; display: inline-flex; align-items: center; gap: 8px; backdrop-filter: blur(6px); }
+        .dot { width: 8px; height: 8px; background: #2df12d; border-radius: 999px; box-shadow: 0 0 0 3px rgba(45,241,45,0.15); }
+
+        /* Quote overlay card on image */
+        .quote-card { position: absolute; left: 16px; top: 16px; background: rgba(255,255,255,0.92); color: #111; border-radius: 16px; padding: 14px 16px; max-width: min(80%, 360px); box-shadow: 0 10px 24px rgba(0,0,0,0.2); backdrop-filter: blur(8px); }
+        .quote-card p { margin: 0 0 8px; font-size: 13px; line-height: 1.4; }
+        .quote-meta { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 12px; opacity: 0.9; }
+        .quote-avatar { width: 22px; height: 22px; border-radius: 999px; object-fit: cover; }
+        
+        /* Testimonials ticker above green section */
+        .testimonials-ticker { position: relative; margin: 32px 0 0; border-top: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(255,255,255,0.08); background: #111; overflow: hidden; }
+        .testimonials-ticker::before, .testimonials-ticker::after { content: ""; position: absolute; top: 0; bottom: 0; width: 80px; pointer-events: none; z-index: 2; }
+        .testimonials-ticker::before { left: 0; background: linear-gradient(90deg, #111 0%, rgba(17,17,17,0) 100%); }
+        .testimonials-ticker::after { right: 0; background: linear-gradient(270deg, #111 0%, rgba(17,17,17,0) 100%); }
+        .testimonials-track { display: flex; gap: 24px; padding: 20px 0; will-change: transform; animation: testimonials-scroll 40s linear infinite; }
+        .testimonials-ticker:hover .testimonials-track { animation-play-state: paused; }
+        .testimonial-card { background: rgba(255,255,255,0.92); color: #111; border-radius: 12px; padding: 16px 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); backdrop-filter: blur(8px); flex-shrink: 0; min-width: 320px; max-width: 380px; display: flex; align-items: center; gap: 12px; }
+        .testimonial-card p { margin: 0; font-size: 13px; line-height: 1.4; font-style: italic; font-weight: 500; flex: 1; }
+        .testimonial-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 2px solid rgba(15,15,15,0.1); }
+        @keyframes testimonials-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+        /* Desktop / large screens */
+        @media (min-width: 980px) {
+            .hero { grid-template-columns: 1fr 1fr; gap: 24px; align-items: stretch; }
+            .page { padding: 24px; }
+            .panel { padding: 48px; }
+            .panel--image { padding: 0; }
+            .panel--green, .panel--image { border-radius: var(--panel-radius); }
+            .panel--green .eyebrow { margin-bottom: 28px; }
+            .panel--green, .panel--image { height: var(--hero-height); }
+        }
+
+        /* Mobile stacking: green first, then image */
+        @media (max-width: 979.98px) {
+            .page { padding: 16px; }
+            .panel--green { order: -1; height: var(--hero-height); }
+            .panel--image { margin-top: 16px; height: var(--hero-height); }
+        }
+
+        /* Footer stats */
+        .stats { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; margin-top: 28px; }
+        .stat { color: #0f0f0f; display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
+        .stat b { font-size: 18px; }
+        @media (min-width: 720px) { .stats { grid-template-columns: repeat(4, minmax(0,1fr)); } }
+
+        /* Scrolling banner (ticker) */
+        .ticker { position: relative; margin: 24px 0 0; border-top: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(255,255,255,0.08); background: #111; overflow: hidden; }
+        .ticker::before, .ticker::after { content: ""; position: absolute; top: 0; bottom: 0; width: 80px; pointer-events: none; z-index: 2; }
+        .ticker::before { left: 0; background: linear-gradient(90deg, #111 0%, rgba(17,17,17,0) 100%); }
+        .ticker::after { right: 0; background: linear-gradient(270deg, #111 0%, rgba(17,17,17,0) 100%); }
+        .ticker-track { display: flex; gap: 36px; padding: 14px 0; white-space: nowrap; will-change: transform; animation: ticker-scroll 28s linear infinite; }
+        .ticker:hover .ticker-track { animation-play-state: paused; }
+        .tick { color: #e6ff67; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 14px; }
+        .tick em { color: #cfe85a; font-style: normal; font-weight: 900; }
+        .tick span { color: #d0d4cf; font-weight: 700; letter-spacing: 0.04em; }
+        .tick .sep { color: #3a3a3a; }
+        .tick .star { color: #a3ff2b; margin-right: 4px; }
+        @keyframes ticker-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        
+        /* Services grid */
+        .section { padding: 48px 16px; color: #eaeaea; }
+        .section .wrap { max-width: 1200px; margin: 0 auto; }
+        .eyebrow-center { text-align: center; text-transform: uppercase; letter-spacing: 0.14em; font-weight: 700; font-size: 12px; color: #a3a3a3; }
+        .section-title { text-align: center; font-weight: 800; font-size: clamp(28px, 5vw, 48px); line-height: 1.08; margin: 12px auto 10px; color: #fff; max-width: 22ch; }
+        .section-sub { text-align: center; color: #b8b8b8; margin: 0 auto 28px; max-width: 60ch; }
+        .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; }
+        .card { background: #1b1b1b; border-radius: var(--panel-radius); padding: 22px; border: 1px solid rgba(255,255,255,0.06); display: flex; flex-direction: column; gap: 10px; min-height: 180px; position: relative; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.3), 0 0 0 1px rgba(214,255,72,0.2); background: #1f1f1f; }
+        .badge { width: 34px; height: 34px; border-radius: 999px; background: #d6ff48; color: #0f0f0f; display: inline-flex; align-items: center; justify-content: center; font-weight: 900; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card:hover .badge { transform: scale(1.1) rotate(5deg); box-shadow: 0 4px 12px rgba(214,255,72,0.3); }
+        .card h3 { margin: 0; color: #fff; font-size: 18px; transition: color 0.3s ease; }
+        .card:hover h3 { color: #d6ff48; }
+        .card p { margin: 0; color: #c9c9c9; font-size: 14px; line-height: 1.5; transition: color 0.3s ease; }
+        .card:hover p { color: #e0e0e0; }
+        
+        /* Automation Modal styles */
+        .automation-modal-window {
+            padding: 60px 50px;
+            max-width: 90%;
+            background: #1b1b1b;
+            border-radius: 12px;
+            border: 1px solid rgba(214,255,72,0.2);
+        }
+        .automation-modal-window .modal-des-area .modal-inner-description {
+            font-family: 'Montserrat', sans-serif;
+        }
+        .automation-modal-window .modal-des-area .modal-inner-description .slide-heading {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #d6ff48;
+        }
+        .automation-modal-window .modal-des-area .modal-inner-description .slide-des {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+        .automation-modal-window .modal-des-area .modal-inner-description .hashtags_div {
+            display: block;
+            margin-bottom: 10px;
+        }
+        .automation-modal-window .modal-des-area .modal-inner-description .hashtags_div a {
+            background-color: transparent;
+            border: solid 1px #d6ff48;
+            color: #d6ff48;
+            padding: 6px 10px 6px 10px;
+            text-decoration: none;
+            margin-right: 5px;
+            display: inline-block;
+            border-radius: 4px;
+        }
+        .automation-modal-window .modal-des-area .modal-inner-description .hashtags_div a:last-child {
+            margin-right: 0;
+        }
+        .automation-modal-window .modal-des-area .modal-inner-description .slide-btn {
+            font-size: 14px;
+            background-color: #d6ff48;
+            padding: 8px 25px 8px 25px;
+            color: #000;
+            text-decoration: none;
+            margin-top: 20px;
+            border: solid 1px #d6ff48;
+            transition: .8s ease-in-out;
+            border-radius: 25px;
+        }
+        .automation-modal-window .modal-des-area .modal-inner-description .slide-btn:hover {
+            background-color: transparent;
+            color: #d6ff48;
+        }
+        .automation-modal-window .modal-img-area img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        
+        /* Case Study Modal styles - matching automation modals */
+        .slide-modal-window {
+            padding: 60px 50px;
+            max-width: 90%;
+            background: #1b1b1b;
+            border-radius: 12px;
+            border: 1px solid rgba(214,255,72,0.2);
+        }
+        .slide-modal-window .modal-des-area .modal-inner-description {
+            font-family: 'Montserrat', sans-serif;
+        }
+        .slide-modal-window .modal-des-area .modal-inner-description .slide-heading {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #d6ff48;
+        }
+        .slide-modal-window .modal-des-area .modal-inner-description .slide-des {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+        .slide-modal-window .modal-des-area .modal-inner-description .hashtags_div {
+            display: block;
+            margin-bottom: 10px;
+        }
+        .slide-modal-window .modal-des-area .modal-inner-description .hashtags_div a {
+            background-color: transparent;
+            border: solid 1px #d6ff48;
+            color: #d6ff48;
+            padding: 6px 10px 6px 10px;
+            text-decoration: none;
+            margin-right: 5px;
+            display: inline-block;
+            border-radius: 4px;
+        }
+        .slide-modal-window .modal-des-area .modal-inner-description .hashtags_div a:last-child {
+            margin-right: 0;
+        }
+        .slide-modal-window .modal-des-area .modal-inner-description .slide-btn {
+            font-size: 14px;
+            background-color: #d6ff48;
+            padding: 8px 25px 8px 25px;
+            color: #000;
+            text-decoration: none;
+            margin-top: 20px;
+            border: solid 1px #d6ff48;
+            transition: .8s ease-in-out;
+            border-radius: 25px;
+        }
+        .slide-modal-window .modal-des-area .modal-inner-description .slide-btn:hover {
+            background-color: transparent;
+            color: #d6ff48;
+        }
+        .slide-modal-window .modal-img-area img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        @media (max-width: 575.98px) {
+            .automation-modal-window {
+                max-width: 85%;
+                padding: 35px 33px;
+            }
+            .automation-modal-window .modal-des-area {
+                padding-top: 20px;
+                text-align: center;
+            }
+            .automation-modal-window .modal-des-area .modal-inner-description .slide-heading {
+                font-size: 20px;
+                margin-bottom: 3px;
+            }
+            .automation-modal-window .modal-des-area .modal-inner-description .slide-des {
+                font-size: 11px;
+                margin-bottom: 0px;
+            }
+            .automation-modal-window .modal-des-area .modal-inner-description .hashtags_div a {
+                padding: 0 3px 0 3px;
+                font-size: 7px;
+                margin-right: 3px;
+                border: none;
+            }
+            .automation-modal-window .modal-des-area .modal-inner-description .slide-btn {
+                font-size: 10px;
+                padding: 5px 20px 5px 20px;
+                margin-top: 0px;
+            }
+            
+            /* Case study modal responsive styles */
+            .slide-modal-window {
+                max-width: 85%;
+                padding: 35px 33px;
+            }
+            .slide-modal-window .modal-des-area {
+                padding-top: 20px;
+                text-align: center;
+            }
+            .slide-modal-window .modal-des-area .modal-inner-description .slide-heading {
+                font-size: 20px;
+                margin-bottom: 3px;
+            }
+            .slide-modal-window .modal-des-area .modal-inner-description .slide-des {
+                font-size: 11px;
+                margin-bottom: 0px;
+            }
+            .slide-modal-window .modal-des-area .modal-inner-description .hashtags_div a {
+                padding: 0 3px 0 3px;
+                font-size: 7px;
+                margin-right: 3px;
+                border: none;
+            }
+            .slide-modal-window .modal-des-area .modal-inner-description .slide-btn {
+                font-size: 10px;
+                padding: 5px 20px 5px 20px;
+                margin-top: 0px;
+            }
+        }
+
+        @media (min-width: 576px) and (max-width: 767.98px) {
+            .automation-modal-window {
+                text-align: center;
+                max-width: 75%;
+                padding: 22px 50px;
+                margin-top: 10px;
+            }
+            .automation-modal-window .modal-des-area .modal-inner-description .slide-heading {
+                font-size: 22px;
+                text-align: center;
+                margin-bottom: 7px;
+                margin-top: 10px;
+            }
+            .automation-modal-window .modal-des-area .modal-inner-description .slide-des {
+                font-size: 12px;
+                text-align: center;
+                margin-bottom: 15px;
+                line-height: 1.8;
+            }
+            .automation-modal-window .modal-des-area .modal-inner-description .hashtags_div a {
+                padding: 0 3px 0 3px;
+                font-size: 10px;
+            }
+            .automation-modal-window .modal-des-area .modal-inner-description .hashtags_div {
+                text-align: center;
+            }
+            .automation-modal-window .modal-des-area .modal-inner-description .slide-btn {
+                font-size: 11px;
+                display: inline-block;
+                padding: 3px 15px 3px 15px;
+                margin-top: 6px;
+            }
+            
+            /* Case study modal responsive styles */
+            .slide-modal-window {
+                text-align: center;
+                max-width: 75%;
+                padding: 22px 50px;
+                margin-top: 10px;
+            }
+            .slide-modal-window .modal-des-area .modal-inner-description .slide-heading {
+                font-size: 22px;
+                text-align: center;
+                margin-bottom: 7px;
+                margin-top: 10px;
+            }
+            .slide-modal-window .modal-des-area .modal-inner-description .slide-des {
+                font-size: 12px;
+                text-align: center;
+                margin-bottom: 15px;
+                line-height: 1.8;
+            }
+            .slide-modal-window .modal-des-area .modal-inner-description .hashtags_div a {
+                padding: 0 3px 0 3px;
+                font-size: 10px;
+            }
+            .slide-modal-window .modal-des-area .modal-inner-description .hashtags_div {
+                text-align: center;
+            }
+            .slide-modal-window .modal-des-area .modal-inner-description .slide-btn {
+                font-size: 11px;
+                display: inline-block;
+                padding: 3px 15px 3px 15px;
+                margin-top: 6px;
+            }
+        }
+
+        @media (min-width: 768px) and (max-width: 991.98px) {
+            .automation-modal-window {
+                max-width: 90%;
+                padding: 52px 21px;
+            }
+            .automation-modal-window .modal-des-area .modal-inner-description .slide-heading {
+                font-size: 22px;
+                margin-bottom: 5px;
+            }
+            .automation-modal-window .modal-des-area .modal-inner-description .slide-des {
+                font-size: 12px;
+                margin-bottom: 10px;
+            }
+            .automation-modal-window .modal-des-area .modal-inner-description .hashtags_div a {
+                background-color: transparent;
+                border: solid 1px #d6ff48;
+                color: #d6ff48;
+                padding: 0 3px 0 3px;
+                text-decoration: none;
+                margin-right: 0;
+                font-size: 10px;
+                display: inline-block;
+            }
+            .automation-modal-window .modal-des-area .modal-inner-description .slide-btn {
+                font-size: 11px;
+                padding: 5px 15px 5px 15px;
+                margin-top: 6px;
+            }
+            
+            /* Case study modal responsive styles */
+            .slide-modal-window {
+                max-width: 90%;
+                padding: 52px 21px;
+            }
+            .slide-modal-window .modal-des-area .modal-inner-description .slide-heading {
+                font-size: 22px;
+                margin-bottom: 5px;
+            }
+            .slide-modal-window .modal-des-area .modal-inner-description .slide-des {
+                font-size: 12px;
+                margin-bottom: 10px;
+            }
+            .slide-modal-window .modal-des-area .modal-inner-description .hashtags_div a {
+                background-color: transparent;
+                border: solid 1px #d6ff48;
+                color: #d6ff48;
+                padding: 0 3px 0 3px;
+                text-decoration: none;
+                margin-right: 0;
+                font-size: 10px;
+                display: inline-block;
+            }
+            .slide-modal-window .modal-des-area .modal-inner-description .slide-btn {
+                font-size: 11px;
+                padding: 5px 15px 5px 15px;
+                margin-top: 6px;
+            }
+        }
+        @media (min-width: 980px) {
+            .section { padding: 64px 24px; }
+            .cards { gap: 22px; }
+            .card { padding: 26px; }
+        }
+        .section-portfolio { padding: 48px 16px; background: #0f0f0f; }
+        .section-portfolio .wrap { max-width: 1200px; margin: 0 auto; }
+        .section-portfolio .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; }
+        .portfolio-card { background: #1b1b1b; border-radius: var(--panel-radius); border: 1px solid rgba(255,255,255,0.06); overflow: hidden; display: flex; flex-direction: column; }
+        .portfolio-thumb { width: 100%; height: 280px; object-fit: cover; display: block; }
+        .portfolio-content { padding: 18px; }
+        .portfolio-content h3 { margin: 0 0 6px; color: #fff; font-size: 18px; }
+        .portfolio-content p { margin: 0; color: #c9c9c9; font-size: 14px; line-height: 1.5; }
+        .portfolio-card:hover { box-shadow: 0 10px 24px rgba(0,0,0,0.35); transform: translateY(-2px); transition: box-shadow .2s ease, transform .12s ease; }
+        @media (min-width: 980px) {
+            .section-portfolio { padding: 64px 24px; }
+            .section-portfolio .cards { gap: 22px; }
+            .portfolio-thumb { height: 320px; }
+        }
+        
+        /* Get Started Form Section */
+        .get-started { padding: 48px 16px; background: #d6ff48; /* BRAND COLOR - Form section background */ position: relative; }
+        
+        /* Step-based form styling */
+        .form-steps { display: flex; justify-content: center; margin-bottom: 32px; }
+        .step-indicator { display: flex; align-items: center; gap: 8px; }
+        .step { width: 40px; height: 40px; border-radius: 50%; background: rgba(15,15,15,0.1); color: #0f0f0f; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; transition: all 0.3s ease; }
+        .step.active { background: #0f0f0f; color: #d6ff48; }
+        .step.completed { background: #0f0f0f; color: #d6ff48; }
+        .step-connector { width: 60px; height: 2px; background: rgba(15,15,15,0.2); }
+        .step-connector.completed { background: #0f0f0f; }
+        
+        .form-step { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .form-step.active { display: block; }
+        .form-step-title { font-size: 20px; font-weight: 700; color: #0f0f0f; margin-bottom: 16px; text-align: center; }
+        .form-step-subtitle { color: rgba(15,15,15,0.7); text-align: center; margin-bottom: 24px; font-size: 14px; }
+        
+        .step-navigation { display: flex; justify-content: space-between; margin-top: 32px; }
+        .step-btn { padding: 12px 24px; border: 2px solid #0f0f0f; background: transparent; color: #0f0f0f; font-weight: 600; border-radius: 6px; cursor: pointer; transition: all 0.3s ease; }
+        .step-btn:hover { background: #0f0f0f; color: #d6ff48; }
+        .step-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .step-btn.primary { background: #0f0f0f; color: #d6ff48; }
+        .step-btn.primary:hover { background: rgba(15,15,15,0.8); }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .get-started .wrap { max-width: 800px; margin: 0 auto; }
+        .get-started .eyebrow-center { text-align: center; text-transform: uppercase; letter-spacing: 0.14em; font-weight: 700; font-size: 12px; color: #0f0f0f; opacity: 0.7; margin-bottom: 20px; }
+        .get-started .section-title { text-align: center; font-weight: 800; font-size: clamp(28px, 5vw, 48px); line-height: 1.08; margin: 12px auto 10px; color: #0f0f0f; max-width: 22ch; }
+        .form-subtitle { font-size: clamp(16px, 2.4vw, 20px); line-height: 1.5; color: #0f0f0f; opacity: 0.8; margin: 0 0 32px; text-align: center; }
+        .commitment-priming { font-size: 14px; color: #0f0f0f; opacity: 0.7; text-align: center; margin: 0 0 24px; font-weight: 600; letter-spacing: 0.02em; }
+        .get-started .slot-badge { background: rgba(0,0,0,0.72); color: #d6ff48; padding: 10px 14px; border-radius: 999px; font-weight: 700; font-size: 12px; display: inline-flex; align-items: center; gap: 8px; backdrop-filter: blur(6px); margin: 0 auto 20px; }
+        .get-started .dot { width: 8px; height: 8px; background: #2df12d; border-radius: 999px; box-shadow: 0 0 0 3px rgba(45,241,45,0.15); }
+        .form-grid { display: grid; gap: 20px; }
+        .form-row { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .form-label { font-weight: 700; font-size: 14px; color: #0f0f0f; }
+        .form-input, .form-select, .form-textarea { padding: 12px 16px; border: 2px solid #0f0f0f; border-radius: 8px; font-size: 16px; background: #fff; color: #0f0f0f; }
+        .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: #262626; }
+        .form-checkbox-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+        .form-checkbox { display: flex; align-items: center; gap: 8px; }
+        .form-checkbox input[type="checkbox"] { width: 18px; height: 18px; }
+        .form-radio-group { display: flex; gap: 20px; flex-wrap: wrap; }
+        .form-radio { display: flex; align-items: center; gap: 8px; }
+        .form-radio input[type="radio"] { width: 18px; height: 18px; }
+        .form-submit { background: #0f0f0f; color: #d6ff48; border: none; padding: 16px 32px; border-radius: 999px; font-weight: 700; font-size: 16px; cursor: pointer; transition: background .2s ease; }
+        .form-submit:hover { background: #262626; }
+        .form-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+        .micro-reassurance { text-align: center; margin-top: 16px; font-size: 12px; color: rgba(15,15,15,0.6); font-weight: 500; }
+        .required { color: #d00; }
+        .confirmation { display: none; text-align: center; padding: 32px; background: #fff; border-radius: 16px; border: 2px solid #0f0f0f; }
+        .confirmation.show { display: block; animation: confirmation-fade-in 0.5s ease-out; }
+        .confirmation h3 { color: #0f0f0f; margin: 0 0 12px; }
+        .confirmation p { color: #0f0f0f; opacity: 0.8; margin: 0; }
+        
+        @keyframes confirmation-fade-in {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes checkmark-bounce {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        @media (min-width: 720px) {
+            .form-row { grid-template-columns: 1fr 1fr; }
+            .get-started { padding: 64px 24px; }
+        }
+        
+        /* Sticky CTA Button */
+        .sticky-cta {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .sticky-cta.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .sticky-cta-btn {
+            background: #d6ff48;
+            color: #0f0f0f;
+            border: 2px solid #0f0f0f;
+            padding: 14px 20px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(214, 255, 72, 0.5);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .sticky-cta-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .sticky-cta-btn:hover::before {
+            left: 100%;
+        }
+        
+        .sticky-cta-btn:hover {
+            background: #c4e63a;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4), 0 0 0 2px rgba(214, 255, 72, 0.8);
+        }
+        
+        .sticky-cta-btn:active {
+            transform: translateY(0);
+        }
+        
+        .sticky-cta-icon {
+            width: 16px;
+            height: 16px;
+            background: #0f0f0f;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #d6ff48;
+        }
+        
+        /* Trusted Platforms Section */
+        .trusted-platforms-section {
+            background: #1a1a1a;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        
+        .trusted-platforms-section .section-title {
+            font-size: clamp(20px, 3vw, 28px);
+            margin-bottom: 32px;
+            color: #e0e0e0;
+        }
+        
+        .platform-logos {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+            align-items: center;
+        }
+        
+        .platform-logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 16px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.06);
+            transition: all 0.3s ease;
+        }
+        
+        .platform-logo:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(214,255,72,0.2);
+            transform: translateY(-2px);
+        }
+        
+        .platform-logo img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            filter: grayscale(100%) brightness(0.8);
+            transition: filter 0.3s ease;
+        }
+        
+        .platform-logo:hover img {
+            filter: grayscale(0%) brightness(1);
+        }
+        
+        .platform-logo span {
+            font-size: 12px;
+            font-weight: 600;
+            color: #a0a0a0;
+            text-align: center;
+            transition: color 0.3s ease;
+        }
+        
+        .platform-logo:hover span {
+            color: #d6ff48;
+        }
+        
+        .platform-caption {
+            text-align: center;
+            font-size: 13px;
+            color: #888;
+            margin: 0;
+            max-width: 60ch;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.5;
+        }
+        
+        /* Mobile responsive for platforms */
+        @media (max-width: 768px) {
+            .platform-logos {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+            
+            .platform-logo {
+                padding: 12px;
+            }
+            
+            .platform-logo img {
+                width: 32px;
+                height: 32px;
+            }
+            
+            .platform-logo span {
+                font-size: 11px;
+            }
+            
+            .platform-caption {
+                font-size: 12px;
+            }
+        }
+        
+        /* Mobile responsive adjustments */
+        @media (max-width: 768px) {
+            .sticky-cta {
+                bottom: 16px;
+                right: 16px;
+            }
+            
+            .sticky-cta-btn {
+                padding: 12px 16px;
+                font-size: 13px;
+            }
+        }
+    </style>
+    <!-- Load an optional system font for nicer typography on Apple devices -->
+</head>
+<body>
+    <main class="page">
+        <section class="hero">
+            <!-- GREEN PANEL (text/content) -->
+            <div class="panel panel--green">
+                <img src="/Users/jazworrell/Documents/Nesium/grid/img/logo_blk.png" alt="Nesium logo" style="height:28px; width:auto; max-width:none; display:block; margin-bottom:12px;" />
+                <div class="eyebrow">AI Marketing Automation</div>
+                <h1 class="title">Your automation assistant for less than a junior.</h1>
+                <p class="subtitle">We install simple automations that cut admin and speed up bookings, content, quotes, and follow-ups.<br> Month to month. GDPR first.</p>
+                <div class="actions">
+                    <button class="btn btn-primary" onclick="location.href='#contact'">Get started</button>
+                    <button class="btn btn-ghost" onclick="location.href='#portfolio'">Portfolio</button>
+                </div>
+                <div class="loss-framing">Every week without automation costs time you won't get back.</div>
+                <div class="social-proof" aria-label="Client reviews">
+                    <div class="avatars" aria-hidden="true">
+                        <img class="avatar" src="/Users/jazworrell/Documents/Nesium/grid/img/img1.jpg" alt="" />
+                        <img class="avatar" src="/Users/jazworrell/Documents/Nesium/grid/img/img2.jpg" alt="" />
+                        <img class="avatar" src="/Users/jazworrell/Documents/Nesium/grid/img/img3.jpg" alt="" />
+                        <img class="avatar" src="/Users/jazworrell/Documents/Nesium/grid/img/img4.jpg" alt="" />
+                    </div>
+                    <div class="stars" aria-label="5 star rating">50+ reviews ★★★★★</div>
+                </div>
+
+                
+            </div>
+
+            <!-- IMAGE PANEL -->
+            <div class="panel panel--image" aria-label="Featured work">
+                <div class="quote-card">
+                    <p>"Our quote turnaround went from 3 days to 3 hours. The automation handles everything while we focus on closing deals."</p>
+                    <div class="quote-meta">
+                        <img class="quote-avatar" src="/Users/jazworrell/Documents/Nesium/grid/img/img2.jpg" alt="Sarah avatar" />
+                        <span>Sarah, TechFlow Solutions</span>
+                    </div>
+                </div>
+                <img class="hero-media" src="/Users/jazworrell/Documents/Nesium/grid/img/placeholderimg.jpeg" alt="Featured brand artwork with bold color" />
+                <div class="slot-badge"><span class="dot"></span> 3 open slots</div>
+            </div>
+        </section>
+        
+        <!-- Scrolling banner (ticker) -->
+        <section class="ticker" aria-label="Scrolling performance stats">
+            <div class="ticker-track" aria-hidden="true">
+                <div class="tick"><span class="star">✶</span><em>120+</em><span>projects shipped</span><span class="sep">•</span></div>
+                <div class="tick"><span class="star">✶</span><em>50+</em><span>happy clients</span><span class="sep">•</span></div>
+                <div class="tick"><span class="star">✶</span><em>12-day</em><span>average turnaround</span><span class="sep">•</span></div>
+                <div class="tick"><span class="star">✶</span><em>50+</em><span>positive reviews</span><span class="sep">•</span></div>
+                <!-- duplicate content for seamless loop -->
+                <div class="tick"><span class="star">✶</span><em>120+</em><span>projects shipped</span><span class="sep">•</span></div>
+                <div class="tick"><span class="star">✶</span><em>50+</em><span>happy clients</span><span class="sep">•</span></div>
+                <div class="tick"><span class="star">✶</span><em>12-day</em><span>average turnaround</span><span class="sep">•</span></div>
+                <div class="tick"><span class="star">✶</span><em>50+</em><span>positive reviews</span><span class="sep">•</span></div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section class="section" id="services">
+            <div class="wrap">
+                <div class="eyebrow-center">What We Do</div>
+                <h2 class="section-title">Nine Plug-and-Play Automations With One KPI Each</h2>
+                <p class="section-sub">From personalised quotes to content - each flow delivers one clear, trackable result.</p>
+
+                <div class="cards">
+                    <article class="card" data-fancybox="automation-modal" data-src="#automation-modal-1">
+                        <div class="badge">1</div>
+                        <h3>Rapid Quotes</h3>
+                        <p>Instant quote flows that collect requirements and generate accurate pricing automatically.</p>
+                    </article>
+                    <article class="card" data-fancybox="automation-modal" data-src="#automation-modal-2">
+                        <div class="badge">2</div>
+                        <h3>Booking Pipeline</h3>
+                        <p>Automated scheduling, confirmations, reminders, and status tracking from lead to job.</p>
+                    </article>
+                    <article class="card" data-fancybox="automation-modal" data-src="#automation-modal-3">
+                        <div class="badge">3</div>
+                        <h3>Ecommerce Optimisation</h3>
+                        <p>Smart prompts, abandoned-cart nudges, and post‑purchase upsells to lift AOV.</p>
+                    </article>
+                    <article class="card" data-fancybox="automation-modal" data-src="#automation-modal-4">
+                        <div class="badge">4</div>
+                        <h3>No‑show Rebooker</h3>
+                        <p>Detect no‑shows and trigger polite follow‑ups with fast rebooking links.</p>
+                    </article>
+                    <article class="card" data-fancybox="automation-modal" data-src="#automation-modal-5">
+                        <div class="badge">5</div>
+                        <h3>Periodic Reporting</h3>
+                        <p>Automated weekly/monthly snapshots of KPIs delivered to Slack and email.</p>
+                    </article>
+                    <article class="card" data-fancybox="automation-modal" data-src="#automation-modal-6">
+                        <div class="badge">6</div>
+                        <h3>Lead Hygiene & Routing</h3>
+                        <p>De‑dupe, enrich, and route new leads to the right owner with SLAs.</p>
+                    </article>
+                    <article class="card" data-fancybox="automation-modal" data-src="#automation-modal-7">
+                        <div class="badge">7</div>
+                        <h3>Sales Collateral Factory</h3>
+                        <p>Generate and version proposals, one‑pagers, and case studies from templates.</p>
+                    </article>
+                    <article class="card" data-fancybox="automation-modal" data-src="#automation-modal-8">
+                        <div class="badge">8</div>
+                        <h3>Blog Kit</h3>
+                        <p>Brief → draft → SEO checks → publish pipeline wired to your CMS.</p>
+                    </article>
+                    <article class="card" data-fancybox="automation-modal" data-src="#automation-modal-9">
+                        <div class="badge">9</div>
+                        <h3>Social Content Kit</h3>
+                        <p>Auto-build post variations, captions, and schedules across your channels.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Portfolio section start -->
+        <section class="section-portfolio" id="portfolio">
+            <div class="wrap">
+                <div class="eyebrow-center">Selected Work</div>
+                <h2 class="section-title">Projects that ship results, not just assets</h2>
+                <p class="section-sub">Click any project to see details and outcomes.</p>
+                <div class="cards">
+                    <article class="portfolio-card">
+                        <a data-fancybox="modal-sidemenu" data-src="#modal-post-fancy-box">
+                            <img class="portfolio-thumb" src="grid/img/img1.jpg" alt="Live, Better, Longer" />
+                        </a>
+                        <div class="portfolio-content">
+                            <h3>Live, Better, Longer</h3>
+                            <p>Post‑event automation with personalised follow‑ups and collateral.</p>
+                        </div>
+                    </article>
+                    <article class="portfolio-card">
+                        <a data-fancybox="modal-sidemenu" data-src="#modal-post-fancy-box-1">
+                            <img class="portfolio-thumb" src="grid/img/img2.jpg" alt="Safeguard Medical" />
+                        </a>
+                        <div class="portfolio-content">
+                            <h3>Safeguard Medical</h3>
+                            <p>Automated sales collateral and guided demo flows.</p>
+                        </div>
+                    </article>
+                    <article class="portfolio-card">
+                        <a data-fancybox="modal-sidemenu" data-src="#modal-post-fancy-box-2">
+                            <img class="portfolio-thumb" src="grid/img/img3.jpg" alt="ET-Lotus" />
+                        </a>
+                        <div class="portfolio-content">
+                            <h3>ET‑Lotus</h3>
+                            <p>AI content engine turning reads into qualified enquiries.</p>
+                        </div>
+                    </article>
+                    <article class="portfolio-card">
+                        <a data-fancybox="modal-sidemenu" data-src="#modal-post-fancy-box-3">
+                            <img class="portfolio-thumb" src="grid/img/img4.jpg" alt="RFX Simulation" />
+                        </a>
+                        <div class="portfolio-content">
+                            <h3>RFX Simulation</h3>
+                            <p>Fast website plus automated SEO driving inbound demos.</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+        <!-- Portfolio section end -->
+        
+        <!-- Testimonials carousel above Get Started section -->
+        <section class="testimonials-ticker" aria-label="Client testimonials">
+            <div class="testimonials-track">
+                <div class="testimonial-card">
+                    <img class="testimonial-avatar" src="/Users/jazworrell/Documents/Nesium/grid/img/img1.jpg" alt="Sarah" />
+                    <p>"We automated in 12 days and saved 8 hours a week — Sarah, TechFlow."</p>
+                </div>
+                <div class="testimonial-card">
+                    <img class="testimonial-avatar" src="/Users/jazworrell/Documents/Nesium/grid/img/img2.jpg" alt="Mike" />
+                    <p>"Quote turnaround went from 3 days to 3 hours. The automation handles everything while we focus on closing deals — Mike, DesignCo."</p>
+                </div>
+                <div class="testimonial-card">
+                    <img class="testimonial-avatar" src="/Users/jazworrell/Documents/Nesium/grid/img/img3.jpg" alt="Lisa" />
+                    <p>"Our booking system now runs itself. We've doubled our capacity without hiring — Lisa, HealthPlus."</p>
+                </div>
+                <div class="testimonial-card">
+                    <img class="testimonial-avatar" src="/Users/jazworrell/Documents/Nesium/grid/img/img4.jpg" alt="James" />
+                    <p>"Content creation is now automated. We publish 3x more with half the effort — James, TechStart."</p>
+                </div>
+                <div class="testimonial-card">
+                    <img class="testimonial-avatar" src="/Users/jazworrell/Documents/Nesium/grid/img/img1.jpg" alt="Alex" />
+                    <p>"Lead management is seamless now. We never miss a follow-up — Alex, GrowthCo."</p>
+                </div>
+                <div class="testimonial-card">
+                    <img class="testimonial-avatar" src="/Users/jazworrell/Documents/Nesium/grid/img/img2.jpg" alt="Emma" />
+                    <p>"Reporting happens automatically. Our team stays focused on what matters — Emma, DataFlow."</p>
+                </div>
+                <!-- duplicate content for seamless loop -->
+                <div class="testimonial-card">
+                    <img class="testimonial-avatar" src="/Users/jazworrell/Documents/Nesium/grid/img/img1.jpg" alt="Sarah" />
+                    <p>"We automated in 12 days and saved 8 hours a week — Sarah, TechFlow."</p>
+                </div>
+                <div class="testimonial-card">
+                    <img class="testimonial-avatar" src="/Users/jazworrell/Documents/Nesium/grid/img/img2.jpg" alt="Mike" />
+                    <p>"Quote turnaround went from 3 days to 3 hours. The automation handles everything while we focus on closing deals — Mike, DesignCo."</p>
+                </div>
+                <div class="testimonial-card">
+                    <img class="testimonial-avatar" src="/Users/jazworrell/Documents/Nesium/grid/img/img3.jpg" alt="Lisa" />
+                    <p>"Our booking system now runs itself. We've doubled our capacity without hiring — Lisa, HealthPlus."</p>
+                </div>
+                <div class="testimonial-card">
+                    <img class="testimonial-avatar" src="/Users/jazworrell/Documents/Nesium/grid/img/img4.jpg" alt="James" />
+                    <p>"Content creation is now automated. We publish 3x more with half the effort — James, TechStart."</p>
+                </div>
+                <div class="testimonial-card">
+                    <img class="testimonial-avatar" src="/Users/jazworrell/Documents/Nesium/grid/img/img1.jpg" alt="Alex" />
+                    <p>"Lead management is seamless now. We never miss a follow-up — Alex, GrowthCo."</p>
+                </div>
+                <div class="testimonial-card">
+                    <img class="testimonial-avatar" src="/Users/jazworrell/Documents/Nesium/grid/img/img2.jpg" alt="Emma" />
+                    <p>"Reporting happens automatically. Our team stays focused on what matters — Emma, DataFlow."</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Get Started Form Section -->
+        <section class="get-started" id="contact">
+            <div class="wrap">
+                <div class="eyebrow-center">Get Started</div>
+                <h2 class="section-title">LET'S BUILD YOUR FIRST AUTOMATION</h2>
+                
+                <!-- Commitment priming -->
+                <div class="commitment-priming">Takes 90 seconds. No payment. Just ideas.</div>
+                
+                <!-- Step Progress Indicator -->
+                <div class="form-steps">
+                    <div class="step-indicator">
+                        <div class="step active" data-step="1">1</div>
+                        <div class="step-connector"></div>
+                        <div class="step" data-step="2">2</div>
+                        <div class="step-connector"></div>
+                        <div class="step" data-step="3">3</div>
+                    </div>
+                </div>
+
+                <form id="automation-form" class="form-grid">
+                    <!-- Step 1: Contact Information -->
+                    <div class="form-step active" data-step="1">
+                        <h3 class="form-step-title">Let's start with the basics</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="firstname" class="form-label">First name <span class="required">*</span></label>
+                                <input type="text" id="firstname" name="firstname" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email" class="form-label">Work email <span class="required">*</span></label>
+                                <input type="email" id="email" name="email" class="form-input" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Preferred contact method <span class="required">*</span></label>
+                            <div class="form-radio-group">
+                                <div class="form-radio">
+                                    <input type="radio" id="contact-email" name="contact-method" value="email" required checked>
+                                    <label for="contact-email">Email</label>
+                                </div>
+                                <div class="form-radio">
+                                    <input type="radio" id="contact-phone" name="contact-method" value="phone" required>
+                                    <label for="contact-phone">Phone</label>
+                                </div>
+                                <div class="form-radio">
+                                    <input type="radio" id="contact-whatsapp" name="contact-method" value="whatsapp" required>
+                                    <label for="contact-whatsapp">WhatsApp</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Phone/WhatsApp number field (shown when phone or whatsapp is selected) -->
+                        <div class="form-group" id="phone-number-group" style="display: none;">
+                            <label for="phone-number" class="form-label">Phone/WhatsApp number <span class="required">*</span></label>
+                            <input type="tel" id="phone-number" name="phone-number" class="form-input" placeholder="Enter your phone number">
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Business Information -->
+                    <div class="form-step" data-step="2">
+                        <h3 class="form-step-title">Tell us about your business</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="company" class="form-label">Company name <span class="required">*</span></label>
+                                <input type="text" id="company" name="company" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="website" class="form-label">Website (optional)</label>
+                                <input type="text" id="website" name="website" class="form-input" placeholder="https://">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="role" class="form-label">Role / position <span class="required">*</span></label>
+                                <select id="role" name="role" class="form-select" required>
+                                    <option value="">Select your role</option>
+                                    <option value="owner">Owner</option>
+                                    <option value="director">Director</option>
+                                    <option value="marketing">Marketing</option>
+                                    <option value="operations">Operations</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="industry" class="form-label">Industry <span class="required">*</span></label>
+                                <select id="industry" name="industry" class="form-select" required>
+                                    <option value="">Select your industry</option>
+                                    <option value="healthcare">Healthcare</option>
+                                    <option value="ecommerce">E-commerce</option>
+                                    <option value="professional">Professional Services</option>
+                                    <option value="local">Local Business</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="revenue" class="form-label">Monthly revenue band <span class="required">*</span></label>
+                                <select id="revenue" name="revenue" class="form-select" required>
+                                    <option value="">Select revenue band</option>
+                                    <option value="under-10k">&lt;£10k</option>
+                                    <option value="10k-50k">£10k–£50k</option>
+                                    <option value="50k-250k">£50k–£250k</option>
+                                    <option value="over-250k">£250k+</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="budget" class="form-label">Budget band <span class="required">*</span></label>
+                                <select id="budget" name="budget" class="form-select" required>
+                                    <option value="">Select budget band</option>
+                                    <option value="500-1200">£500 – £1,200</option>
+                                    <option value="1200-1800">£1,200 – £1,800</option>
+                                    <option value="1800-plus">£1,800+</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Automation Needs -->
+                    <div class="form-step" data-step="3">
+                        <h3 class="form-step-title">What do you want to improve?</h3>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Which area needs improvement? <span class="required">*</span></label>
+                            <div class="form-checkbox-group">
+                                <div class="form-checkbox">
+                                    <input type="checkbox" id="improve-quotes" name="improvements" value="faster-quotes">
+                                    <label for="improve-quotes">Faster quotes</label>
+                                </div>
+                                <div class="form-checkbox">
+                                    <input type="checkbox" id="improve-bookings" name="improvements" value="more-bookings">
+                                    <label for="improve-bookings">More bookings</label>
+                                </div>
+                                <div class="form-checkbox">
+                                    <input type="checkbox" id="improve-content" name="improvements" value="content-blogs">
+                                    <label for="improve-content">Content or blogs</label>
+                                </div>
+                                <div class="form-checkbox">
+                                    <input type="checkbox" id="improve-reporting" name="improvements" value="reporting">
+                                    <label for="improve-reporting">Reporting</label>
+                                </div>
+                                <div class="form-checkbox">
+                                    <input type="checkbox" id="improve-leads" name="improvements" value="lead-management">
+                                    <label for="improve-leads">Lead management</label>
+                                </div>
+                                <div class="form-checkbox">
+                                    <input type="checkbox" id="improve-ecommerce" name="improvements" value="ecommerce-optimisation">
+                                    <label for="improve-ecommerce">E-commerce optimisation</label>
+                                </div>
+                                <div class="form-checkbox">
+                                    <input type="checkbox" id="improve-collateral" name="improvements" value="sales-collateral">
+                                    <label for="improve-collateral">Sales collateral</label>
+                                </div>
+                                <div class="form-checkbox">
+                                    <input type="checkbox" id="improve-other" name="improvements" value="other-custom">
+                                    <label for="improve-other">Other/Custom</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Custom improvement field (shown when "Other/Custom" is selected) -->
+                        <div class="form-group" id="custom-improvement-group" style="display: none;">
+                            <label for="custom-improvement" class="form-label">Please specify <span class="required">*</span></label>
+                            <input type="text" id="custom-improvement" name="custom-improvement" class="form-input" placeholder="Describe what you'd like to improve">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="kpi" class="form-label">Preferred automation KPI <span class="required">*</span></label>
+                            <input type="text" id="kpi" name="kpi" class="form-input" placeholder="e.g. 'reduce no-shows', 'send quotes faster', 'increase cart recovery'" required>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="start-date" class="form-label">Desired start date <span class="required">*</span></label>
+                                <input type="date" id="start-date" name="start-date" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="file-upload" class="form-label">File upload (optional)</label>
+                                <input type="file" id="file-upload" name="file-upload" class="form-input" accept=".pdf,.doc,.docx,.txt">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <div class="form-checkbox">
+                                <input type="checkbox" id="consent" name="consent" required>
+                                <label for="consent">I agree to be contacted and accept the <a href="#" style="color: #0f0f0f; text-decoration: underline;">privacy notice</a>. <span class="required">*</span></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step Navigation -->
+                    <div class="step-navigation">
+                        <button type="button" class="step-btn" id="prev-step" disabled>Previous</button>
+                        <button type="button" class="step-btn primary" id="next-step">Next</button>
+                        <button type="submit" class="step-btn primary" id="submit-form" style="display: none;">Build My Automation</button>
+                    </div>
+                    
+                    <!-- Micro-reassurance -->
+                    <div class="micro-reassurance">No spam. You control your data.</div>
+                </form>
+                
+                <div id="confirmation" class="confirmation">
+                    <div style="text-align: center; padding: 40px 20px;">
+                        <div style="width: 80px; height: 80px; background: #d6ff48; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; animation: checkmark-bounce 0.6s ease-out;">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" fill="#0f0f0f"/>
+                            </svg>
+                        </div>
+                        <h3 style="color: #0f0f0f; font-size: 24px; font-weight: 700; margin: 0 0 12px;">Form Submitted Successfully!</h3>
+                        <p style="color: #0f0f0f; font-size: 16px; margin: 0 0 20px; opacity: 0.8;">Thanks — we'll review your info and send your one-page automation plan within 24 hours.</p>
+                        <div style="background: rgba(15,15,15,0.05); padding: 16px; border-radius: 8px; margin: 20px 0;">
+                            <p style="color: #0f0f0f; font-size: 14px; margin: 0; font-weight: 600;">📧 You'll receive an email within 24 hours with the next steps</p>
+                        </div>
+                        <div style="margin-top: 24px;">
+                            <button onclick="location.reload()" style="background: #0f0f0f; color: #d6ff48; border: none; padding: 12px 24px; border-radius: 6px; font-weight: 600; cursor: pointer; margin-right: 12px;">Submit Another</button>
+                            <button onclick="location.href='#services'" style="background: transparent; color: #0f0f0f; border: 2px solid #0f0f0f; padding: 10px 24px; border-radius: 6px; font-weight: 600; cursor: pointer;">View Services</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Get Started Form Section end -->
+        
+        <!-- Trusted Platforms Section -->
+        <section class="section trusted-platforms-section">
+            <div class="wrap">
+                <h2 class="section-title">Built using trusted platforms like:</h2>
+                
+                <div class="platform-logos">
+                    <div class="platform-logo">
+                        <img src="grid/img/logos/zapier-logo.svg" alt="Zapier" />
+                        <span>Zapier</span>
+                    </div>
+                    <div class="platform-logo">
+                        <img src="grid/img/logos/google-cloud-logo.svg" alt="Google Cloud" />
+                        <span>Google Cloud</span>
+                    </div>
+                    <div class="platform-logo">
+                        <img src="grid/img/logos/openai-logo.svg" alt="OpenAI" />
+                        <span>OpenAI</span>
+                    </div>
+                    <div class="platform-logo">
+                        <img src="grid/img/logos/n8n-logo.svg" alt="n8n" />
+                        <span>n8n</span>
+                    </div>
+                    <div class="platform-logo">
+                        <img src="grid/img/logos/stripe-logo.svg" alt="Stripe" />
+                        <span>Stripe</span>
+                    </div>
+                    <div class="platform-logo">
+                        <img src="grid/img/logos/make-logo.svg" alt="Make (Integromat)" />
+                        <span>Make</span>
+                    </div>
+                </div>
+                
+                <p class="platform-caption">Your automations run on secure, industry-standard infrastructure — fast, private, and fully GDPR-compliant.</p>
+            </div>
+        </section>
+        <!-- Trusted Platforms Section end -->
+        
+        <!-- Sticky CTA Button -->
+        <div class="sticky-cta" id="sticky-cta">
+            <button class="sticky-cta-btn" onclick="location.href='#contact'">
+                <div class="sticky-cta-icon">→</div>
+                Start your automation
+            </button>
+        </div>
+    </main>
+    
+    <!-- Footer -->
+    <footer style="background: #0f0f0f; color: #e0e0e0; padding: 48px 24px; text-align: center; border-top: 1px solid rgba(255,255,255,0.1);">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <div style="margin-bottom: 24px;">
+                <img src="/Users/jazworrell/Documents/Nesium/grid/img/logo.png" alt="Nesium logo" style="height: 32px; width: auto; margin-bottom: 16px;" />
+                <h3 style="color: #d6ff48; font-size: 20px; font-weight: 700; margin: 0 0 8px;">AI Marketing Automation</h3>
+                <p style="color: #a0a0a0; font-size: 14px; margin: 0 0 24px;">Your automation assistant for less than a junior.</p>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 32px; margin-bottom: 32px; text-align: left;">
+                <div>
+                    <h4 style="color: #fff; font-size: 16px; font-weight: 600; margin: 0 0 12px;">Contact</h4>
+                    <p style="color: #a0a0a0; font-size: 14px; margin: 0 0 8px;">
+                        <strong style="color: #d6ff48;">Email:</strong> info@nesium.co.uk
+                    </p>
+                    <p style="color: #a0a0a0; font-size: 14px; margin: 0;">
+                        <strong style="color: #d6ff48;">Response time:</strong> Within 24 hours
+                    </p>
+                </div>
+                
+                <div>
+                    <h4 style="color: #fff; font-size: 16px; font-weight: 600; margin: 0 0 12px;">Services</h4>
+                    <ul style="color: #a0a0a0; font-size: 14px; margin: 0; padding-left: 16px;">
+                        <li style="margin-bottom: 4px;">Rapid Quotes</li>
+                        <li style="margin-bottom: 4px;">Booking Pipeline</li>
+                        <li style="margin-bottom: 4px;">Lead Management</li>
+                        <li style="margin-bottom: 4px;">Content Automation</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 style="color: #fff; font-size: 16px; font-weight: 600; margin: 0 0 12px;">Why Choose Us</h4>
+                    <ul style="color: #a0a0a0; font-size: 14px; margin: 0; padding-left: 16px;">
+                        <li style="margin-bottom: 4px;">GDPR Compliant</li>
+                        <li style="margin-bottom: 4px;">12-day Average Turnaround</li>
+                        <li style="margin-bottom: 4px;">50+ Happy Clients</li>
+                        <li style="margin-bottom: 4px;">Month-to-Month Contracts</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 24px;">
+                <p style="color: #888; font-size: 12px; margin: 0;">
+                    © 2024 Nesium. All rights reserved. | 
+                    <a href="#" style="color: #d6ff48; text-decoration: none;">Privacy Policy</a> | 
+                    <a href="#" style="color: #d6ff48; text-decoration: none;">Terms of Service</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- modal windows -->
+    <div class="slide-modal-window" id="modal-post-fancy-box" style="display: none">
+        <div class="container">
+           <div class="row">
+               <div class="col-12 col-md-7 modal-img-area">
+                   <img src="grid/img/img1-big.jpg" alt="Live, Better, Longer Event Automation">
+               </div>
+               <div class="col-12 col-md-5 modal-des-area d-flex justify-content-center align-items-center">
+                       <div class="modal-inner-description">
+                           <h4 class="slide-heading">Live, Better, Longer</h4>
+                           <p class="slide-des">Post-event automation system that transformed attendee engagement. We built personalized follow-up sequences that automatically segment attendees based on their event interactions, delivering targeted content and rebooking opportunities. Result: 340% increase in post-event conversions and 60% reduction in manual follow-up time.</p>
+                           <div class="hashtags_div">
+                               <a href="#.">#event-automation</a>
+                               <a href="#.">#lead-nurturing</a>
+                               <a href="#.">#conversion-optimization</a>
+                           </div>
+                           <a href="#contact" class="btn slide-btn rounded-pill">Get Similar Results</a>
+                       </div>
+               </div>
+               </div>
+        </div>
+    </div>
+    <div class="slide-modal-window" id="modal-post-fancy-box-1" style="display: none">
+        <div class="container">
+           <div class="row">
+               <div class="col-12 col-lg-7 modal-img-area">
+                   <img src="grid/img/img2-big.jpg" alt="Safeguard Medical Sales Automation">
+               </div>
+               <div class="col-12 col-lg-5 modal-des-area d-flex justify-content-center align-items-center">
+                       <div class="modal-inner-description">
+                           <h4 class="slide-heading">Safeguard Medical</h4>
+                           <p class="slide-des">Automated sales collateral generation and guided demo flows for medical equipment sales. We created dynamic proposal templates that automatically populate with client-specific requirements and pricing, plus automated demo scheduling with personalized preparation materials. Result: 75% faster proposal delivery and 45% increase in demo-to-sale conversion rates.</p>
+                           <div class="hashtags_div">
+                               <a href="#.">#sales-automation</a>
+                               <a href="#.">#proposal-generation</a>
+                               <a href="#.">#demo-optimization</a>
+                           </div>
+                           <a href="#contact" class="btn slide-btn rounded-pill">Get Similar Results</a>
+                       </div>
+               </div>
+               </div>
+        </div>
+    </div>
+    <div class="slide-modal-window" id="modal-post-fancy-box-2" style="display: none">
+        <div class="container">
+           <div class="row">
+               <div class="col-12 col-lg-7 modal-img-area">
+                   <img src="grid/img/img3-big.jpg" alt="ET-Lotus AI Content Engine">
+               </div>
+               <div class="col-12 col-lg-5 modal-des-area d-flex justify-content-center align-items-center">
+                       <div class="modal-inner-description">
+                           <h4 class="slide-heading">ET-Lotus</h4>
+                           <p class="slide-des">AI-powered content engine that transforms website visitors into qualified enquiries. We built an intelligent content recommendation system that analyzes visitor behavior and automatically serves personalized content pieces, case studies, and contact forms. Result: 280% increase in content engagement and 65% improvement in visitor-to-lead conversion rates.</p>
+                           <div class="hashtags_div">
+                               <a href="#.">#ai-content</a>
+                               <a href="#.">#lead-generation</a>
+                               <a href="#.">#personalization</a>
+                           </div>
+                           <a href="#contact" class="btn slide-btn rounded-pill">Get Similar Results</a>
+                       </div>
+               </div>
+               </div>
+        </div>
+    </div>
+    <div class="slide-modal-window" id="modal-post-fancy-box-3" style="display: none">
+        <div class="container">
+           <div class="row">
+               <div class="col-12 col-lg-7 modal-img-area">
+                   <img src="grid/img/img4-big.jpg" alt="RFX Simulation Website & SEO Automation">
+               </div>
+               <div class="col-12 col-lg-5 modal-des-area d-flex justify-content-center align-items-center">
+                       <div class="modal-inner-description">
+                           <h4 class="slide-heading">RFX Simulation</h4>
+                           <p class="slide-des">Fast website development with automated SEO driving inbound demos. We built a high-converting website with integrated lead capture forms and automated SEO content generation that targets long-tail keywords. Result: 150% increase in organic traffic and 40% improvement in demo booking rates within 3 months.</p>
+                           <div class="hashtags_div">
+                               <a href="#.">#website-development</a>
+                               <a href="#.">#seo-automation</a>
+                               <a href="#.">#lead-capture</a>
+                           </div>
+                           <a href="#contact" class="btn slide-btn rounded-pill">Get Similar Results</a>
+                       </div>
+               </div>
+               </div>
+        </div>
+    </div>
+    <!-- modal windows end -->
+
+    <script src="vendor/js/bundle.min.js"></script>
+    <script src="vendor/js/jquery.fancybox.min.js"></script>
+    
+    <!-- A/B Testing System -->
+    <script src="js/ab-testing.js"></script>
+    <script src="js/form-ab-integration.js"></script>
+    <script src="js/ab-analytics-dashboard.js"></script>
+    <script src="js/google-sheets-integration.js?v=20251010-4"></script>
+    
+    <script>
+        // Initialize Google Sheets Integration
+        window.googleSheetsIntegration = new GoogleSheetsIntegration();
+        
+        // Debug: Check if scripts are loading
+        console.log('Page loaded, checking scripts...');
+        
+        // Set default date to next Monday
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, checking for form elements...');
+            
+            const startDateInput = document.getElementById('start-date');
+            if (startDateInput) {
+                const today = new Date();
+                const daysUntilMonday = (1 + 7 - today.getDay()) % 7;
+                const nextMonday = new Date(today);
+                nextMonday.setDate(today.getDate() + (daysUntilMonday === 0 ? 7 : daysUntilMonday));
+                startDateInput.value = nextMonday.toISOString().split('T')[0];
+                console.log('Start date set to:', startDateInput.value);
+            }
+            
+            // Check if A/B testing system loaded
+            if (window.abTesting) {
+                console.log('✅ A/B Testing system loaded');
+            } else {
+                console.log('❌ A/B Testing system NOT loaded');
+            }
+            
+            // Check if form integration loaded
+            if (window.formABIntegration) {
+                console.log('✅ Form integration loaded');
+            } else {
+                console.log('❌ Form integration NOT loaded');
+            }
+            
+            // Check if Google Sheets integration loaded
+            if (window.googleSheetsIntegration) {
+                console.log('✅ Google Sheets integration loaded');
+                console.log('🔧 Debug commands available:');
+                console.log('  - testGoogleSheetsConnection() - Test the connection');
+                console.log('  - setGoogleSheetsUrl("YOUR_URL") - Set the Google Apps Script URL');
+                console.log('  - testFormSubmission() - Test form submission');
+                console.log('  - window.googleSheetsIntegration.webAppUrl - Check current URL');
+                console.log('  - window.googleSheetsIntegration.isEnabled - Check if enabled');
+                
+                // Add debug functions to window for easy access
+                window.testGoogleSheetsConnection = async () => {
+                    const result = await window.googleSheetsIntegration.testConnection();
+                    console.log('🧪 Connection test result:', result);
+                    return result;
+                };
+                
+                window.setGoogleSheetsUrl = (url) => {
+                    window.googleSheetsIntegration.setWebAppUrl(url);
+                    console.log('🔧 Google Sheets URL updated to:', url);
+                    console.log('🔧 Integration enabled:', window.googleSheetsIntegration.isEnabled);
+                };
+                
+                window.testFormSubmission = async () => {
+                    console.log('🧪 Testing form submission...');
+                    const testData = new FormData();
+                    testData.append('name', 'Test User');
+                    testData.append('email', 'test@example.com');
+                    testData.append('company', 'Test Company');
+                    testData.append('projectType', 'Owner');
+                    testData.append('budget', '£500 – £1,200');
+                    testData.append('improvements', 'faster-quotes, more-bookings');
+                    testData.append('startDate', '2024-01-15');
+                    testData.append('message', 'This is a test submission');
+                    testData.append('form_type', 'test');
+                    testData.append('url', window.location.href);
+                    
+                    const result = await window.googleSheetsIntegration.submitToGoogleSheets(testData, 'test');
+                    console.log('🧪 Form submission test result:', result);
+                    return result;
+                };
+            } else {
+                console.log('❌ Google Sheets integration NOT loaded');
+            }
+            
+            // Add a simple form handler as backup
+            const form = document.getElementById('automation-form');
+            if (form) {
+                console.log('Form found, adding backup handler...');
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    console.log('Form submitted!');
+                    
+                    // Get form data
+                    const formData = new FormData(this);
+                    const data = Object.fromEntries(formData);
+                    console.log('Form data:', data);
+                });
+            } else {
+                console.log('❌ Form not found');
+            }
+        });
+
+        // Form submission is now handled by the A/B testing system
+        // The form-ab-integration.js will handle all form submissions
+        // Automation modal functionality using Fancybox
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Fancybox for automation modals
+            if (typeof $.fancybox !== 'undefined') {
+                $("[data-fancybox='automation-modal']").fancybox({
+                    // Options will go here
+                    closeBtnInside: false,
+                    callbacks: {
+                        open: function() {
+                            $('body').addClass('ohidden');
+                        },
+                        close: function() {
+                            $('body').removeClass('ohidden');
+                        }
+                    }
+                });
+            }
+
+            // Step-based form functionality
+            let currentStep = 1;
+            const totalSteps = 3;
+            const steps = document.querySelectorAll('.form-step');
+            const stepIndicators = document.querySelectorAll('.step');
+            const stepConnectors = document.querySelectorAll('.step-connector');
+            const prevBtn = document.getElementById('prev-step');
+            const nextBtn = document.getElementById('next-step');
+            const submitBtn = document.getElementById('submit-form');
+
+            function updateStepDisplay() {
+                // Update step visibility
+                steps.forEach((step, index) => {
+                    if (index + 1 === currentStep) {
+                        step.classList.add('active');
+                    } else {
+                        step.classList.remove('active');
+                    }
+                });
+
+                // Update step indicators
+                stepIndicators.forEach((indicator, index) => {
+                    if (index + 1 < currentStep) {
+                        indicator.classList.add('completed');
+                        indicator.classList.remove('active');
+                    } else if (index + 1 === currentStep) {
+                        indicator.classList.add('active');
+                        indicator.classList.remove('completed');
+                    } else {
+                        indicator.classList.remove('active', 'completed');
+                    }
+                });
+
+                // Update step connectors
+                stepConnectors.forEach((connector, index) => {
+                    if (index + 1 < currentStep) {
+                        connector.classList.add('completed');
+                    } else {
+                        connector.classList.remove('completed');
+                    }
+                });
+
+                // Update navigation buttons
+                prevBtn.disabled = currentStep === 1;
+                
+                if (currentStep === totalSteps) {
+                    nextBtn.style.display = 'none';
+                    submitBtn.style.display = 'inline-block';
+                } else {
+                    nextBtn.style.display = 'inline-block';
+                    submitBtn.style.display = 'none';
+                }
+            }
+
+            function validateCurrentStep() {
+                const currentStepElement = document.querySelector(`.form-step[data-step="${currentStep}"]`);
+                const requiredFields = currentStepElement.querySelectorAll('input[required], select[required]');
+                
+                for (let field of requiredFields) {
+                    if (field.type === 'checkbox' || field.type === 'radio') {
+                        const name = field.name;
+                        const checked = currentStepElement.querySelector(`input[name="${name}"]:checked`);
+                        if (!checked) {
+                            field.focus();
+                            return false;
+                        }
+                    } else if (!field.value.trim()) {
+                        field.focus();
+                        return false;
+                    }
+                }
+                
+                // Additional validation for conditional fields
+                // Check if phone/WhatsApp is selected but no number provided
+                const contactMethod = document.querySelector('input[name="contact-method"]:checked');
+                if (contactMethod && (contactMethod.value === 'phone' || contactMethod.value === 'whatsapp')) {
+                    const phoneNumber = document.getElementById('phone-number');
+                    if (!phoneNumber.value.trim()) {
+                        phoneNumber.focus();
+                        return false;
+                    }
+                }
+                
+                // Check if "Other/Custom" is selected but no custom text provided
+                const improveOther = document.getElementById('improve-other');
+                if (improveOther && improveOther.checked) {
+                    const customImprovement = document.getElementById('custom-improvement');
+                    if (!customImprovement.value.trim()) {
+                        customImprovement.focus();
+                        return false;
+                    }
+                }
+                
+                return true;
+            }
+
+            // Next step button
+            nextBtn.addEventListener('click', function() {
+                if (validateCurrentStep()) {
+                    currentStep++;
+                    updateStepDisplay();
+                }
+            });
+
+            // Previous step button
+            prevBtn.addEventListener('click', function() {
+                currentStep--;
+                updateStepDisplay();
+            });
+
+            // Handle contact method changes to show/hide phone number field
+            const contactMethods = document.querySelectorAll('input[name="contact-method"]');
+            const phoneNumberGroup = document.getElementById('phone-number-group');
+            const phoneNumberInput = document.getElementById('phone-number');
+            
+            contactMethods.forEach(method => {
+                method.addEventListener('change', function() {
+                    if (this.value === 'phone' || this.value === 'whatsapp') {
+                        phoneNumberGroup.style.display = 'block';
+                        phoneNumberInput.required = true;
+                    } else {
+                        phoneNumberGroup.style.display = 'none';
+                        phoneNumberInput.required = false;
+                        phoneNumberInput.value = '';
+                    }
+                });
+            });
+            
+            // Handle "Other/Custom" improvement checkbox to show/hide custom field
+            const improveOtherCheckbox = document.getElementById('improve-other');
+            const customImprovementGroup = document.getElementById('custom-improvement-group');
+            const customImprovementInput = document.getElementById('custom-improvement');
+            
+            improveOtherCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    customImprovementGroup.style.display = 'block';
+                    customImprovementInput.required = true;
+                } else {
+                    customImprovementGroup.style.display = 'none';
+                    customImprovementInput.required = false;
+                    customImprovementInput.value = '';
+                }
+            });
+
+            // Step indicator clicks
+            stepIndicators.forEach((indicator, index) => {
+                indicator.addEventListener('click', function() {
+                    const targetStep = index + 1;
+                    if (targetStep <= currentStep) {
+                        currentStep = targetStep;
+                        updateStepDisplay();
+                    }
+                });
+            });
+
+            // Initialize
+            updateStepDisplay();
+        });
+
+        // Sticky CTA functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const stickyCta = document.getElementById('sticky-cta');
+            const servicesSection = document.querySelector('.section');
+            const getStartedSection = document.querySelector('.get-started');
+            
+            if (stickyCta && servicesSection && getStartedSection) {
+                function handleScroll() {
+                    const servicesRect = servicesSection.getBoundingClientRect();
+                    const getStartedRect = getStartedSection.getBoundingClientRect();
+                    const scrollPosition = window.scrollY;
+                    
+                    // Show CTA much earlier - when services section comes into view
+                    // Hide only when user reaches the very bottom of the get-started section
+                    if (servicesRect.top < window.innerHeight * 0.8 && 
+                        getStartedRect.bottom > window.innerHeight * 0.1) {
+                        stickyCta.classList.add('show');
+                    } else {
+                        stickyCta.classList.remove('show');
+                    }
+                }
+                
+                // Throttle scroll events for better performance
+                let scrollTimeout;
+                window.addEventListener('scroll', function() {
+                    if (scrollTimeout) {
+                        clearTimeout(scrollTimeout);
+                    }
+                    scrollTimeout = setTimeout(handleScroll, 10);
+                });
+                
+                // Initial check
+                handleScroll();
+            }
+        });
+    </script>
+
+    <!-- Automation Modals -->
+    <div class="automation-modal-window" id="automation-modal-1" style="display: none">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-md-7 modal-img-area">
+                    <img src="grid/img/img1-big.jpg" alt="Rapid Quotes Automation">
+                </div>
+                <div class="col-12 col-md-5 modal-des-area d-flex justify-content-center align-items-center">
+                    <div class="modal-inner-description">
+                        <h4 class="slide-heading">Rapid Quotes</h4>
+                        <p class="slide-des">
+                            Transform your quoting process with AI-powered automation. Collect client requirements through smart forms, automatically calculate pricing based on your rates, and deliver professional quotes in minutes instead of hours.
+                        </p>
+                        <div class="hashtags_div">
+                            <a href="#.">#automation</a>
+                            <a href="#.">#quotes</a>
+                        </div>
+                        <a href="#contact" class="btn slide-btn rounded-pill">Get Started</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="automation-modal-window" id="automation-modal-2" style="display: none">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-md-7 modal-img-area">
+                    <img src="grid/img/img2-big.jpg" alt="Booking Pipeline Automation">
+                </div>
+                <div class="col-12 col-md-5 modal-des-area d-flex justify-content-center align-items-center">
+                    <div class="modal-inner-description">
+                        <h4 class="slide-heading">Booking Pipeline</h4>
+                        <p class="slide-des">
+                            Streamline your entire booking workflow. Automatically schedule appointments, send confirmation emails, dispatch reminder notifications, and track project status from initial inquiry to completion.
+                        </p>
+                        <div class="hashtags_div">
+                            <a href="#.">#automation</a>
+                            <a href="#.">#booking</a>
+                        </div>
+                        <a href="#contact" class="btn slide-btn rounded-pill">Get Started</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="automation-modal-window" id="automation-modal-3" style="display: none">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-md-7 modal-img-area">
+                    <img src="grid/img/img3-big.jpg" alt="Ecommerce Optimisation Automation">
+                </div>
+                <div class="col-12 col-md-5 modal-des-area d-flex justify-content-center align-items-center">
+                    <div class="modal-inner-description">
+                        <h4 class="slide-heading">Ecommerce Optimisation</h4>
+                        <p class="slide-des">
+                            Boost your online sales with intelligent automation. Send personalized product recommendations, recover abandoned carts with targeted campaigns, and maximize revenue with strategic post-purchase upsells.
+                        </p>
+                        <div class="hashtags_div">
+                            <a href="#.">#automation</a>
+                            <a href="#.">#ecommerce</a>
+                        </div>
+                        <a href="#contact" class="btn slide-btn rounded-pill">Get Started</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="automation-modal-window" id="automation-modal-4" style="display: none">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-md-7 modal-img-area">
+                    <img src="grid/img/img4-big.jpg" alt="No-show Rebooker Automation">
+                </div>
+                <div class="col-12 col-md-5 modal-des-area d-flex justify-content-center align-items-center">
+                    <div class="modal-inner-description">
+                        <h4 class="slide-heading">No‑show Rebooker</h4>
+                        <p class="slide-des">
+                            Never lose revenue to missed appointments. Automatically detect no-shows, send gentle follow-up messages, and provide instant rebooking options to recover lost business opportunities.
+                        </p>
+                        <div class="hashtags_div">
+                            <a href="#.">#automation</a>
+                            <a href="#.">#rebooking</a>
+                        </div>
+                        <a href="#contact" class="btn slide-btn rounded-pill">Get Started</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="automation-modal-window" id="automation-modal-5" style="display: none">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-md-7 modal-img-area">
+                    <img src="grid/img/img5-big.jpg" alt="Periodic Reporting Automation">
+                </div>
+                <div class="col-12 col-md-5 modal-des-area d-flex justify-content-center align-items-center">
+                    <div class="modal-inner-description">
+                        <h4 class="slide-heading">Periodic Reporting</h4>
+                        <p class="slide-des">
+                            Stay on top of your business metrics effortlessly. Generate comprehensive performance reports automatically, track key indicators, and receive insights delivered directly to your team channels.
+                        </p>
+                        <div class="hashtags_div">
+                            <a href="#.">#automation</a>
+                            <a href="#.">#reporting</a>
+                        </div>
+                        <a href="#contact" class="btn slide-btn rounded-pill">Get Started</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="automation-modal-window" id="automation-modal-6" style="display: none">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-md-7 modal-img-area">
+                    <img src="grid/img/img6-big.jpg" alt="Lead Hygiene & Routing Automation">
+                </div>
+                <div class="col-12 col-md-5 modal-des-area d-flex justify-content-center align-items-center">
+                    <div class="modal-inner-description">
+                        <h4 class="slide-heading">Lead Hygiene & Routing</h4>
+                        <p class="slide-des">
+                            Optimize your lead management process. Automatically clean duplicate entries, enrich contact data, and intelligently route qualified leads to the right team member based on predefined criteria and SLAs.
+                        </p>
+                        <div class="hashtags_div">
+                            <a href="#.">#automation</a>
+                            <a href="#.">#leads</a>
+                        </div>
+                        <a href="#contact" class="btn slide-btn rounded-pill">Get Started</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="automation-modal-window" id="automation-modal-7" style="display: none">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-md-7 modal-img-area">
+                    <img src="grid/img/img1-big.jpg" alt="Sales Collateral Factory Automation">
+                </div>
+                <div class="col-12 col-md-5 modal-des-area d-flex justify-content-center align-items-center">
+                    <div class="modal-inner-description">
+                        <h4 class="slide-heading">Sales Collateral Factory</h4>
+                        <p class="slide-des">
+                            Scale your sales materials production. Automatically generate customized proposals, create compelling one-pagers, and produce case studies from professional templates, ensuring consistency and saving hours of manual work.
+                        </p>
+                        <div class="hashtags_div">
+                            <a href="#.">#automation</a>
+                            <a href="#.">#sales</a>
+                        </div>
+                        <a href="#contact" class="btn slide-btn rounded-pill">Get Started</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="automation-modal-window" id="automation-modal-8" style="display: none">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-md-7 modal-img-area">
+                    <img src="grid/img/img2-big.jpg" alt="Blog Kit Automation">
+                </div>
+                <div class="col-12 col-md-5 modal-des-area d-flex justify-content-center align-items-center">
+                    <div class="modal-inner-description">
+                        <h4 class="slide-heading">Blog Kit</h4>
+                        <p class="slide-des">
+                            Streamline your content creation workflow. From initial brief to published post, automate the entire blog production process including SEO optimization, content review, and seamless CMS integration.
+                        </p>
+                        <div class="hashtags_div">
+                            <a href="#.">#automation</a>
+                            <a href="#.">#content</a>
+                        </div>
+                        <a href="#contact" class="btn slide-btn rounded-pill">Get Started</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="automation-modal-window" id="automation-modal-9" style="display: none">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-md-7 modal-img-area">
+                    <img src="grid/img/img3-big.jpg" alt="Social Content Kit Automation">
+                </div>
+                <div class="col-12 col-md-5 modal-des-area d-flex justify-content-center align-items-center">
+                    <div class="modal-inner-description">
+                        <h4 class="slide-heading">Social Content Kit</h4>
+                        <p class="slide-des">
+                            Master your social media presence. Automatically create multiple post variations, generate engaging captions, and schedule content across all your social channels for maximum reach and engagement.
+                        </p>
+                        <div class="hashtags_div">
+                            <a href="#.">#automation</a>
+                            <a href="#.">#social</a>
+                        </div>
+                        <a href="#contact" class="btn slide-btn rounded-pill">Get Started</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+<!--
+Notes:
+- Mobile-first stacking keeps the green panel above the image using order in CSS.
+- Update copy or routes for buttons as needed.
+-->
+</html>
+
+
