@@ -214,12 +214,31 @@ class GoogleSheetsIntegration {
 // Initialize Google Sheets integration
 window.googleSheetsIntegration = new GoogleSheetsIntegration();
 
-// Add test function to global scope for debugging
-window.testGoogleSheetsConnection = async () => {
-    console.log('🧪 Testing Google Sheets connection...');
-    const result = await window.googleSheetsIntegration.testConnection();
-    console.log('🧪 Test result:', result);
-    return result;
+// Add simple URL test function
+window.testSimpleURL = () => {
+    const baseUrl = 'https://script.google.com/macros/s/AKfycby2dC6bvS8GAFd_we-RoOnQQsWL53RAZ1ioqvVEij96B9kJRRd9RVLwun7B6ZaeesUb/exec';
+    const testUrl = `${baseUrl}?callback=test123`;
+    
+    console.log('🧪 Testing simple URL:', testUrl);
+    
+    // Create a simple script tag test
+    const script = document.createElement('script');
+    script.src = testUrl;
+    
+    window.test123 = (response) => {
+        console.log('✅ Simple test successful:', response);
+        document.head.removeChild(script);
+    };
+    
+    script.onerror = (error) => {
+        console.error('❌ Simple test failed:', error);
+        console.error('❌ Test URL:', testUrl);
+        if (document.head.contains(script)) {
+            document.head.removeChild(script);
+        }
+    };
+    
+    document.head.appendChild(script);
 };
 
 // Export for use in other scripts
