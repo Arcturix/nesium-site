@@ -66,6 +66,13 @@ class GoogleSheetsIntegration {
             console.log('🔄 Attempting JSONP request to Google Sheets...');
             console.log('📋 URL parameters:', params.toString());
             console.log('📋 Full URL:', url);
+            console.log('📋 URL length:', url.length);
+            
+            // Check if URL is too long (browsers have limits)
+            if (url.length > 2000) {
+                console.warn('⚠️ URL is very long, this might cause issues');
+                console.log('📋 Truncated URL:', url.substring(0, 200) + '...');
+            }
             
             // Create JSONP request
             return new Promise((resolve, reject) => {
@@ -86,10 +93,17 @@ class GoogleSheetsIntegration {
                 // Create script tag for JSONP
                 const script = document.createElement('script');
                 script.src = url;
-                script.onerror = () => {
+                script.onerror = (error) => {
                     delete window[callbackName];
                     console.error('❌ JSONP request failed');
+                    console.error('❌ Error details:', error);
+                    console.error('❌ Failed URL:', url);
+                    console.error('❌ Script element:', script);
                     resolve({ success: false, message: 'Network error: JSONP request failed' });
+                };
+                
+                script.onload = () => {
+                    console.log('📡 Script loaded successfully');
                 };
                 
                 // Add timeout
@@ -127,6 +141,10 @@ class GoogleSheetsIntegration {
         try {
             console.log('🔄 Testing Google Sheets connection to:', this.webAppUrl);
             
+            // First, test if the base URL is accessible
+            const testUrl = `${this.webAppUrl}?callback=testCallback`;
+            console.log('🧪 Testing base URL:', testUrl);
+            
             // Use JSONP for testing (same as main submission)
             const callbackName = 'testCallback_' + Date.now();
             const url = `${this.webAppUrl}?callback=${callbackName}`;
@@ -144,10 +162,16 @@ class GoogleSheetsIntegration {
                 // Create script tag for JSONP
                 const script = document.createElement('script');
                 script.src = url;
-                script.onerror = () => {
+                script.onerror = (error) => {
                     delete window[callbackName];
                     console.error('❌ Google Sheets connection test failed');
+                    console.error('❌ Test URL:', url);
+                    console.error('❌ Error:', error);
                     resolve({ success: false, message: 'Connection failed' });
+                };
+                
+                script.onload = () => {
+                    console.log('📡 Test script loaded successfully');
                 };
                 
                 // Add timeout
@@ -189,6 +213,14 @@ class GoogleSheetsIntegration {
 
 // Initialize Google Sheets integration
 window.googleSheetsIntegration = new GoogleSheetsIntegration();
+
+// Add test function to global scope for debugging
+window.testGoogleSheetsConnection = async () => {
+    console.log('🧪 Testing Google Sheets connection...');
+    const result = await window.googleSheetsIntegration.testConnection();
+    console.log('🧪 Test result:', result);
+    return result;
+};
 
 // Export for use in other scripts
 if (typeof module !== 'undefined' && module.exports) {
