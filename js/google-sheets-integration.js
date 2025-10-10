@@ -7,7 +7,7 @@ class GoogleSheetsIntegration {
     constructor() {
         // Replace this with your Google Apps Script web app URL
         // Get this from: Deploy → New deployment → Web app → Copy the URL
-        this.webAppUrl = 'https://script.google.com/macros/s/AKfycbwF9wRvApYv1Da2m2GZ6VmU3nn5s2v7vfwkP6GGJvZGyjAfFgySmjb4aHGtlSNPglzM/exec';
+        this.webAppUrl = 'https://script.google.com/macros/s/AKfycby2dC6bvS8GAFd_we-RoOnQQsWL53RAZ1ioqvVEij96B9kJRRd9RVLwun7B6ZaeesUb/exec';
         this.isEnabled = this.webAppUrl !== 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
         
         if (this.isEnabled) {
@@ -45,44 +45,69 @@ class GoogleSheetsIntegration {
             
             // Add metadata
             data.form_type = formType;
-            data.timestamp = new Date().toISOString();
             data.url = window.location.href;
             
-            // Use secure fetch POST request to Google Sheets
-            console.log('🔄 Attempting fetch POST request to Google Sheets...');
+            // Build URL with parameters for JSONP
+            const params = new URLSearchParams();
+            Object.keys(data).forEach(key => {
+                if (data[key] !== null && data[key] !== undefined) {
+                    params.append(key, data[key]);
+                }
+            });
             
-            // Create timeout promise for 10-second timeout
-            const timeoutPromise = new Promise((_, reject) => {
+            // Add callback parameter for JSONP
+            const callbackName = 'googleSheetsCallback_' + Date.now();
+            params.append('callback', callbackName);
+            
+            const url = `${this.webAppUrl}?${params.toString()}`;
+            
+            console.log('🔄 Attempting JSONP request to Google Sheets...');
+            console.log('📋 URL:', url);
+            
+            // Create JSONP request
+            return new Promise((resolve, reject) => {
+                // Set up callback function
+                window[callbackName] = (response) => {
+                    // Clean up callback
+                    delete window[callbackName];
+                    
+                    if (response.success) {
+                        console.log('✅ Form data submitted to Google Sheets successfully (JSONP)');
+                        resolve({ success: true, message: 'Data saved to Google Sheets' });
+                    } else {
+                        console.error('❌ Google Sheets submission failed (JSONP):', response.message);
+                        resolve({ success: false, message: response.message });
+                    }
+                };
+                
+                // Create script tag for JSONP
+                const script = document.createElement('script');
+                script.src = url;
+                script.onerror = () => {
+                    delete window[callbackName];
+                    console.error('❌ JSONP request failed');
+                    resolve({ success: false, message: 'Network error: JSONP request failed' });
+                };
+                
+                // Add timeout
                 setTimeout(() => {
-                    reject(new Error('Request timeout'));
+                    if (window[callbackName]) {
+                        delete window[callbackName];
+                        console.error('❌ JSONP request timeout');
+                        resolve({ success: false, message: 'Request timeout' });
+                    }
                 }, 10000);
+                
+                // Execute JSONP request
+                document.head.appendChild(script);
+                
+                // Clean up script tag after a delay
+                setTimeout(() => {
+                    if (script.parentNode) {
+                        script.parentNode.removeChild(script);
+                    }
+                }, 1000);
             });
-            
-            // Create fetch promise
-            const fetchPromise = fetch(this.webAppUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
-            
-            // Race between fetch and timeout
-            const response = await Promise.race([fetchPromise, timeoutPromise]);
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            
-            const result = await response.json();
-            
-            if (result.success) {
-                console.log('✅ Form data submitted to Google Sheets successfully (fetch)');
-                return { success: true, message: 'Data saved to Google Sheets' };
-            } else {
-                console.error('❌ Google Sheets submission failed (fetch):', result.message);
-                return { success: false, message: result.message };
-            }
             
         } catch (error) {
             console.error('❌ Error submitting to Google Sheets:', error.message);
@@ -99,19 +124,48 @@ class GoogleSheetsIntegration {
         try {
             console.log('🔄 Testing Google Sheets connection to:', this.webAppUrl);
             
-            // Use fetch for testing (same as main submission)
-            const response = await fetch(this.webAppUrl, {
-                method: 'GET'
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const result = await response.json();
+            // Use JSONP for testing (same as main submission)
+            const callbackName = 'testCallback_' + Date.now();
+            const url = `${this.webAppUrl}?callback=${callbackName}`;
             
-            console.log('✅ Google Sheets connection test successful:', result);
-            return { success: true, message: 'Connection successful' };
+            return new Promise((resolve) => {
+                // Set up callback function
+                window[callbackName] = (response) => {
+                    // Clean up callback
+                    delete window[callbackName];
+                    
+                    console.log('✅ Google Sheets connection test successful:', response);
+                    resolve({ success: true, message: 'Connection successful' });
+                };
+                
+                // Create script tag for JSONP
+                const script = document.createElement('script');
+                script.src = url;
+                script.onerror = () => {
+                    delete window[callbackName];
+                    console.error('❌ Google Sheets connection test failed');
+                    resolve({ success: false, message: 'Connection failed' });
+                };
+                
+                // Add timeout
+                setTimeout(() => {
+                    if (window[callbackName]) {
+                        delete window[callbackName];
+                        console.error('❌ Connection test timeout');
+                        resolve({ success: false, message: 'Connection timeout' });
+                    }
+                }, 5000);
+                
+                // Execute JSONP request
+                document.head.appendChild(script);
+                
+                // Clean up script tag after a delay
+                setTimeout(() => {
+                    if (script.parentNode) {
+                        script.parentNode.removeChild(script);
+                    }
+                }, 1000);
+            });
             
         } catch (error) {
             console.error('❌ Google Sheets connection test failed:', error);
