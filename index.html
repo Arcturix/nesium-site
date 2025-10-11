@@ -1652,6 +1652,7 @@
                     
                     // Submit to n8n webhook
                     const webhookURL = 'https://nesium.app.n8n.cloud/webhook-test/0b9d8d67-f14c-4857-8f29-7d580dd6c47e';
+                    console.log('Using n8n webhook:', webhookURL);
                     
                     try {
                         const res = await fetch(webhookURL, {
