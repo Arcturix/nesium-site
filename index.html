@@ -1318,10 +1318,6 @@
                                 <label for="start-date" class="form-label">Desired start date <span class="required">*</span></label>
                                 <input type="date" id="start-date" name="start-date" class="form-input" required>
                             </div>
-                            <div class="form-group">
-                                <label for="file-upload" class="form-label">File upload (optional)</label>
-                                <input type="file" id="file-upload" name="file-upload" class="form-input" accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png">
-                            </div>
                         </div>
                         
                         <div class="form-group">
@@ -1648,6 +1644,10 @@
                     const formData = new FormData(this);
                     const data = Object.fromEntries(formData);
                     
+                    // Handle multiple checkbox values for improvements
+                    const improvements = formData.getAll('improvements');
+                    data.improvements = improvements.join(', ');
+                    
                     // Add metadata
                     data.form_type = 'automation-form';
                     data.url = window.location.href;
@@ -1655,34 +1655,6 @@
                     // Add A/B test title if available
                     if (window.abTesting && window.abTesting.getCurrentVariation) {
                         data.ab_test_title = window.abTesting.getCurrentVariation();
-                    }
-                    
-                    // Handle file upload if present
-                    const fileUpload = document.getElementById('file-upload');
-                    if (fileUpload && fileUpload.files && fileUpload.files[0]) {
-                        const file = fileUpload.files[0];
-                        try {
-                            // Convert file to base64
-                            const base64 = await new Promise((resolve, reject) => {
-                                const reader = new FileReader();
-                                reader.readAsDataURL(file);
-                                reader.onload = () => {
-                                    // Remove the data URL prefix (data:image/jpeg;base64,)
-                                    const base64Data = reader.result.split(',')[1];
-                                    resolve(base64Data);
-                                };
-                                reader.onerror = error => reject(error);
-                            });
-                            
-                            data.fileName = file.name;
-                            data.fileContent = base64;
-                            data.fileType = file.type;
-                            console.log('File prepared for upload:', file.name, 'Size:', file.size, 'bytes');
-                        } catch (error) {
-                            console.error('File upload error:', error);
-                            alert('Error preparing file for upload. Please try again.');
-                            return;
-                        }
                     }
                     
                     console.log('Form data:', data);
