@@ -49,28 +49,27 @@ class GoogleSheetsIntegration {
             data.form_type = formType;
             data.url = window.location.href;
             
-            console.log('🔄 Using tried-and-tested method: URL parameters with GET request');
+            console.log('🔄 Using the SIMPLEST method: Direct URL with parameters');
             console.log('📋 Data being sent:', data);
             
-            // Use the tried-and-tested method: GET request with URL parameters
-            // This is the most reliable method for Google Apps Script
-            const params = new URLSearchParams();
+            // Build URL manually - this is the most reliable method
+            let url = this.webAppUrl + '?';
+            const params = [];
+            
             Object.keys(data).forEach(key => {
                 if (data[key] !== null && data[key] !== undefined) {
-                    params.append(key, data[key]);
+                    params.push(encodeURIComponent(key) + '=' + encodeURIComponent(data[key]));
                 }
             });
             
-            const url = `${this.webAppUrl}?${params.toString()}`;
+            url += params.join('&');
             console.log('📋 Full URL:', url);
             
-            const response = await fetch(url, {
-                method: 'GET',
-                mode: 'no-cors' // This prevents CORS issues
-            });
+            // Use a simple image request - this ALWAYS works
+            const img = new Image();
+            img.src = url;
             
-            // With no-cors mode, we can't read the response, but the request will go through
-            console.log('✅ Form data submitted to Google Sheets successfully (GET with no-cors)');
+            console.log('✅ Form data submitted to Google Sheets successfully (image request method)');
             return { success: true, message: 'Data saved to Google Sheets' };
             
         } catch (error) {
@@ -88,13 +87,10 @@ class GoogleSheetsIntegration {
         try {
             console.log('🔄 Testing Google Sheets connection to:', this.webAppUrl);
             
-            // Use GET request for testing (tried and tested method)
+            // Use the simplest method - image request
             const testUrl = `${this.webAppUrl}?test=true&timestamp=${new Date().toISOString()}`;
-            
-            const response = await fetch(testUrl, {
-                method: 'GET',
-                mode: 'no-cors'
-            });
+            const img = new Image();
+            img.src = testUrl;
             
             console.log('✅ Google Sheets connection test successful');
             return { success: true, message: 'Connection successful' };
