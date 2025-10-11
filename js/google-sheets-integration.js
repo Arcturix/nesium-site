@@ -52,13 +52,17 @@ class GoogleSheetsIntegration {
             console.log('🔄 Attempting POST request to Google Sheets...');
             console.log('📋 Data being sent:', data);
             
-            // Use Fetch API with POST request
+            // Use form submission method that works better with Google Apps Script CORS
+            const formData = new FormData();
+            Object.keys(data).forEach(key => {
+                if (data[key] !== null && data[key] !== undefined) {
+                    formData.append(key, data[key]);
+                }
+            });
+            
             const response = await fetch(this.webAppUrl, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
+                body: formData
             });
             
             if (!response.ok) {
@@ -91,17 +95,13 @@ class GoogleSheetsIntegration {
             console.log('🔄 Testing Google Sheets connection to:', this.webAppUrl);
             
             // Use POST request for testing with minimal data
-            const testData = {
-                test: true,
-                timestamp: new Date().toISOString()
-            };
+            const testFormData = new FormData();
+            testFormData.append('test', 'true');
+            testFormData.append('timestamp', new Date().toISOString());
             
             const response = await fetch(this.webAppUrl, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(testData)
+                body: testFormData
             });
             
             if (!response.ok) {
