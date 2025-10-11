@@ -53,16 +53,16 @@ class GoogleSheetsIntegration {
             console.log('📋 Data being sent:', data);
             
             // Use form submission method that works better with Google Apps Script CORS
-            const formData = new FormData();
+            const postFormData = new FormData();
             Object.keys(data).forEach(key => {
                 if (data[key] !== null && data[key] !== undefined) {
-                    formData.append(key, data[key]);
+                    postFormData.append(key, data[key]);
                 }
             });
             
             const response = await fetch(this.webAppUrl, {
                 method: 'POST',
-                body: formData
+                body: postFormData
             });
             
             if (!response.ok) {
