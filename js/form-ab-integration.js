@@ -224,11 +224,12 @@ class FormABIntegration {
             name: data.firstname || data.fullname || data.name || '',
             email: data.email || '',
             phone: data['phone-number'] || data.phone || '',
+            callingCode: data['calling-code'] || data.callingCode || '',
             company: data.company || '',
-            projectType: data.role || data.projectType || '', // Fixed: role is the actual field name
+            role: data.role || '',
             budget: data.budget || '',
             timeline: data.timeline || '',
-            improvements: Array.isArray(data.improvements) ? data.improvements.join(', ') : (data.improvements || ''), // Fixed: handle array properly and join with commas
+            improvements: Array.isArray(data.improvements) ? data.improvements : (data.improvements ? [data.improvements] : []), // Keep as array for Google Apps Script
             customImprovement: data['custom-improvement'] || '',
             startDate: data['start-date'] || data.startDate || '', // Fixed: start-date is the actual field name
             message: data.kpi || data.message || '', // Fixed: kpi is the actual field name
