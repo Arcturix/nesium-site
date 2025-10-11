@@ -1554,13 +1554,11 @@
     
     <!-- A/B Testing System -->
     <script src="js/ab-testing.js"></script>
-    <script src="js/form-ab-integration.js"></script>
+    <!-- Integration files removed - using simple inline approach -->
     <script src="js/ab-analytics-dashboard.js"></script>
-    <script src="js/google-sheets-integration.js?v=20251010-4"></script>
     
     <script>
-        // Initialize Google Sheets Integration
-        window.googleSheetsIntegration = new GoogleSheetsIntegration();
+        // Google Sheets integration now handled inline
         
         // Debug: Check if scripts are loading
         console.log('Page loaded, checking scripts...');
@@ -1638,18 +1636,51 @@
                 console.log('❌ Google Sheets integration NOT loaded');
             }
             
-            // Add a simple form handler as backup
+            // Simple, direct form submission
             const form = document.getElementById('automation-form');
             if (form) {
-                console.log('Form found, adding backup handler...');
-                form.addEventListener('submit', function(e) {
+                console.log('Form found, adding simple handler...');
+                form.addEventListener('submit', async function(e) {
                     e.preventDefault();
                     console.log('Form submitted!');
                     
                     // Get form data
                     const formData = new FormData(this);
                     const data = Object.fromEntries(formData);
+                    
+                    // Add metadata
+                    data.form_type = 'automation-form';
+                    data.url = window.location.href;
+                    
                     console.log('Form data:', data);
+                    
+                    // Submit to Google Apps Script
+                    const scriptURL = 'https://script.google.com/macros/s/AKfycbw-Ek1ts79BwTBwpi34duCW_F17pGhUz54TWJ6znbyrsAbLey1CB7DpfymW405-_S66/exec';
+                    
+                    try {
+                        const res = await fetch(scriptURL, {
+                            method: 'POST',
+                            body: JSON.stringify(data),
+                            headers: {'Content-Type': 'application/json'}
+                        });
+                        
+                        const result = await res.text();
+                        console.log('Submission result:', result);
+                        
+                        // Hide form and show confirmation
+                        document.getElementById('automation-form').style.display = 'none';
+                        document.getElementById('confirmation').classList.add('show');
+                        
+                        // Scroll to confirmation
+                        document.getElementById('confirmation').scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'center' 
+                        });
+                        
+                    } catch (err) {
+                        console.error('Submission failed:', err);
+                        alert('Submission failed: ' + err);
+                    }
                 });
             } else {
                 console.log('❌ Form not found');
