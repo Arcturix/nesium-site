@@ -52,17 +52,22 @@ class GoogleSheetsIntegration {
             console.log('🔄 Attempting POST request to Google Sheets...');
             console.log('📋 Data being sent:', data);
             
-            // Use form submission method that works better with Google Apps Script CORS
-            const postFormData = new FormData();
+            // Convert data to URL-encoded string (most reliable for Google Apps Script)
+            const urlParams = new URLSearchParams();
             Object.keys(data).forEach(key => {
                 if (data[key] !== null && data[key] !== undefined) {
-                    postFormData.append(key, data[key]);
+                    urlParams.append(key, data[key]);
                 }
             });
             
+            console.log('📋 URL parameters:', urlParams.toString());
+            
             const response = await fetch(this.webAppUrl, {
                 method: 'POST',
-                body: postFormData
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: urlParams.toString()
             });
             
             if (!response.ok) {
@@ -95,13 +100,16 @@ class GoogleSheetsIntegration {
             console.log('🔄 Testing Google Sheets connection to:', this.webAppUrl);
             
             // Use POST request for testing with minimal data
-            const testFormData = new FormData();
-            testFormData.append('test', 'true');
-            testFormData.append('timestamp', new Date().toISOString());
+            const testParams = new URLSearchParams();
+            testParams.append('test', 'true');
+            testParams.append('timestamp', new Date().toISOString());
             
             const response = await fetch(this.webAppUrl, {
                 method: 'POST',
-                body: testFormData
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: testParams.toString()
             });
             
             if (!response.ok) {
