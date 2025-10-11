@@ -1650,30 +1650,18 @@
                     
                     console.log('Form data:', data);
                     
-                    // Submit to Google Apps Script using JSONP (GET request)
-                    const scriptURL = 'https://script.google.com/macros/s/AKfycbw-Ek1ts79BwTBwpi34duCW_F17pGhUz54TWJ6znbyrsAbLey1CB7DpfymW405-_S66/exec';
+                    // Submit to n8n webhook
+                    const webhookURL = 'https://nesium.app.n8n.cloud/webhook-test/0b9d8d67-f14c-4857-8f29-7d580dd6c47e';
                     
-                    // Build URL with parameters
-                    const params = new URLSearchParams();
-                    Object.keys(data).forEach(key => {
-                        if (data[key] !== null && data[key] !== undefined) {
-                            params.append(key, data[key]);
-                        }
-                    });
-                    
-                    const url = `${scriptURL}?${params.toString()}`;
-                    console.log('Submission URL:', url);
-                    
-                    // Use JSONP method - create script tag
-                    const callbackName = 'formCallback_' + Date.now();
-                    const jsonpUrl = `${url}&callback=${callbackName}`;
-                    
-                    // Set up callback function
-                    window[callbackName] = function(response) {
-                        console.log('Submission result:', response);
+                    try {
+                        const res = await fetch(webhookURL, {
+                            method: 'POST',
+                            body: JSON.stringify(data),
+                            headers: {'Content-Type': 'application/json'}
+                        });
                         
-                        // Clean up callback
-                        delete window[callbackName];
+                        const result = await res.text();
+                        console.log('Submission result:', result);
                         
                         // Hide form and show confirmation
                         document.getElementById('automation-form').style.display = 'none';
@@ -1684,25 +1672,11 @@
                             behavior: 'smooth', 
                             block: 'center' 
                         });
-                    };
-                    
-                    // Create and load script tag
-                    const script = document.createElement('script');
-                    script.src = jsonpUrl;
-                    script.onerror = function() {
-                        console.error('Submission failed');
-                        delete window[callbackName];
-                        alert('Submission failed - please try again');
-                    };
-                    
-                    document.head.appendChild(script);
-                    
-                    // Clean up script tag after a delay
-                    setTimeout(() => {
-                        if (script.parentNode) {
-                            script.parentNode.removeChild(script);
-                        }
-                    }, 1000);
+                        
+                    } catch (err) {
+                        console.error('Submission failed:', err);
+                        alert('Submission failed: ' + err);
+                    }
                 });
             } else {
                 console.log('❌ Form not found');
