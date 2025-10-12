@@ -702,10 +702,168 @@
                 font-size: 13px;
             }
         }
+        /* Hamburger Menu */
+        .hamburger-menu {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 1000;
+        }
+        
+        .hamburger-btn {
+            width: 50px;
+            height: 50px;
+            background: rgba(17, 17, 17, 0.9);
+            border: 2px solid #d6ff48;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .hamburger-btn:hover {
+            background: rgba(214, 255, 72, 0.1);
+            transform: scale(1.05);
+        }
+        
+        .hamburger-line {
+            width: 20px;
+            height: 2px;
+            background: #d6ff48;
+            transition: all 0.3s ease;
+            border-radius: 1px;
+        }
+        
+        .hamburger-btn.active .hamburger-line:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        
+        .hamburger-btn.active .hamburger-line:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .hamburger-btn.active .hamburger-line:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+        
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(17, 17, 17, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .menu-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        
+        .menu-links {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .menu-links li {
+            margin-bottom: 32px;
+        }
+        
+        .menu-links a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 24px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .menu-links a:hover {
+            color: #d6ff48;
+            transform: translateY(-2px);
+        }
+        
+        .menu-links a.cta {
+            background: #d6ff48;
+            color: #0f0f0f;
+            padding: 16px 32px;
+            border-radius: 999px;
+            font-weight: 700;
+        }
+        
+        .menu-links a.cta:hover {
+            background: #c4e63a;
+            transform: translateY(-2px);
+        }
+        
+        /* Mobile adjustments */
+        @media (max-width: 768px) {
+            .hamburger-menu {
+                top: 16px;
+                right: 16px;
+            }
+            
+            .hamburger-btn {
+                width: 44px;
+                height: 44px;
+            }
+            
+            .hamburger-line {
+                width: 18px;
+            }
+            
+            .menu-links a {
+                font-size: 20px;
+            }
+            
+            .menu-links a.cta {
+                padding: 14px 28px;
+            }
+        }
     </style>
     <!-- Load an optional system font for nicer typography on Apple devices -->
 </head>
 <body>
+    <!-- Hamburger Menu -->
+    <div class="hamburger-menu">
+        <button class="hamburger-btn" id="hamburgerBtn">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+        </button>
+    </div>
+    
+    <!-- Menu Overlay -->
+    <div class="menu-overlay" id="menuOverlay">
+        <div class="menu-content">
+            <ul class="menu-links">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#portfolio">Portfolio</a></li>
+                <li><a href="#contact" class="cta">Start Now</a></li>
+            </ul>
+        </div>
+    </div>
+    
     <main class="page">
         <section class="hero">
             <!-- GREEN PANEL (text/content) -->
@@ -1551,6 +1709,36 @@
 
     <script src="vendor/js/bundle.min.js"></script>
     <script src="vendor/js/jquery.fancybox.min.js"></script>
+    
+    <!-- Hamburger Menu JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const hamburgerBtn = document.getElementById('hamburgerBtn');
+            const menuOverlay = document.getElementById('menuOverlay');
+            
+            hamburgerBtn.addEventListener('click', function() {
+                hamburgerBtn.classList.toggle('active');
+                menuOverlay.classList.toggle('active');
+            });
+            
+            // Close menu when clicking on overlay
+            menuOverlay.addEventListener('click', function(e) {
+                if (e.target === menuOverlay) {
+                    hamburgerBtn.classList.remove('active');
+                    menuOverlay.classList.remove('active');
+                }
+            });
+            
+            // Close menu when clicking on menu links
+            const menuLinks = document.querySelectorAll('.menu-links a');
+            menuLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    hamburgerBtn.classList.remove('active');
+                    menuOverlay.classList.remove('active');
+                });
+            });
+        });
+    </script>
     
     <!-- Integration files removed - using simple inline approach -->
     
