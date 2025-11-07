@@ -21,7 +21,7 @@
         .panel { padding: 32px; }
         .panel--green { background: #d6ff48; /* BRAND COLOR - Main neon accent color (change this to update brand color) */ border-radius: var(--panel-radius); }
         .panel--image { position: relative; overflow: hidden; border-radius: var(--panel-radius); padding: 0; }
-        .hero-media { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .hero-media { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: var(--panel-radius); }
         .panel--green { min-height: var(--hero-height); }
         .panel--image { min-height: var(--hero-height); }
 
@@ -89,15 +89,25 @@
         /* Mobile stacking: green first, then image */
         @media (max-width: 979.98px) {
             .page { padding: 16px; }
-            .hero { --hero-height: auto; }
+            .hero { --hero-height: auto; --matched-height: auto; }
             .panel--green { order: -1; min-height: auto; }
-            .panel--image { margin-top: 16px; min-height: 50vh; }
+            .panel--image { 
+                margin-top: 16px; 
+                min-height: var(--matched-height, auto);
+                height: var(--matched-height, auto);
+                border-radius: var(--panel-radius) !important; 
+                overflow: hidden;
+            }
+            .panel--image .hero-media {
+                border-radius: var(--panel-radius);
+            }
         }
         
         /* Smaller mobile devices */
         @media (max-width: 768px) {
             .panel { padding: 24px; }
             .panel--green { padding: 24px; }
+            .panel--image { padding: 0; } /* Keep image panel padding at 0 */
             .title { margin: 12px 0 8px; }
             .subtitle { margin: 8px 0 20px; }
             .actions { gap: 8px; }
@@ -111,7 +121,15 @@
             .page { padding: 12px; }
             .panel { padding: 20px; }
             .panel--green { padding: 20px; }
-            .panel--image { min-height: 40vh; }
+            .panel--image { 
+                padding: 0; /* Keep image panel padding at 0 */
+                min-height: auto; 
+                border-radius: var(--panel-radius) !important;
+                overflow: hidden;
+            }
+            .panel--image .hero-media {
+                border-radius: var(--panel-radius);
+            }
             .title { margin: 8px 0 6px; }
             .subtitle { margin: 6px 0 16px; font-size: 14px; }
             .btn { padding: 10px 16px; font-size: 13px; }
@@ -899,8 +917,8 @@
             <div class="panel panel--green">
                 <img src="grid/img/logo_blk.png" alt="Nesium logo" style="height:28px; width:auto; max-width:none; display:block; margin-bottom:12px;" />
                 <div class="eyebrow">AI Marketing Automation</div>
-                <h1 class="title">Your automation assistant for less than a junior.</h1>
-                <p class="subtitle">We install simple automations that cut admin and speed up bookings, social, content, quotes, and follow-ups.<br> Month to month. GDPR first.</p>
+                <h1 class="title">Your senior marketing assistant for less than a junior.</h1>
+                <p class="subtitle">We install bespoke automations that cut admin and speed up bookings, social, content, quotes, and follow-ups.<br> Month to month. GDPR first.</p>
                 <div class="actions">
                     <button class="btn btn-primary" onclick="location.href='#contact'">Get started</button>
                     <button class="btn btn-ghost" onclick="location.href='#portfolio'">Portfolio</button>
@@ -2407,6 +2425,82 @@
         </div>
     </div>
 
+    <script>
+        // Simple function to match image panel size to green panel on mobile
+        function matchMobileHeights() {
+            if (window.innerWidth <= 979.98) {
+                const greenPanel = document.querySelector('.panel--green');
+                const imagePanel = document.querySelector('.panel--image');
+                
+                if (greenPanel && imagePanel) {
+                    // Match height
+                    const greenHeight = greenPanel.offsetHeight;
+                    if (greenHeight > 0) {
+                        imagePanel.style.height = greenHeight + 'px';
+                        imagePanel.style.minHeight = greenHeight + 'px';
+                    }
+                    
+                    // Match width - get the computed width including padding
+                    const greenRect = greenPanel.getBoundingClientRect();
+                    const greenWidth = greenRect.width;
+                    
+                    if (greenWidth > 0) {
+                        imagePanel.style.width = greenWidth + 'px';
+                        imagePanel.style.maxWidth = greenWidth + 'px';
+                    }
+                }
+            } else {
+                // Reset on desktop
+                const imagePanel = document.querySelector('.panel--image');
+                if (imagePanel) {
+                    imagePanel.style.height = '';
+                    imagePanel.style.minHeight = '';
+                    imagePanel.style.width = '';
+                    imagePanel.style.maxWidth = '';
+                }
+            }
+        }
+        
+        // Run on load and resize
+        function runMatch() {
+            matchMobileHeights();
+            setTimeout(matchMobileHeights, 100);
+            setTimeout(matchMobileHeights, 300);
+        }
+        
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', runMatch);
+        } else {
+            runMatch();
+        }
+        
+        window.addEventListener('load', runMatch);
+        
+        let resizeTimeout;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(runMatch, 100);
+        });
+        
+        // Use ResizeObserver to watch green panel
+        if (window.ResizeObserver) {
+            const greenPanel = document.querySelector('.panel--green');
+            if (greenPanel) {
+                new ResizeObserver(function() {
+                    if (window.innerWidth <= 979.98) {
+                        matchMobileHeights();
+                    }
+                }).observe(greenPanel);
+            }
+        }
+        
+        // Simple check every 200ms on mobile
+        setInterval(function() {
+            if (window.innerWidth <= 979.98) {
+                matchMobileHeights();
+            }
+        }, 200);
+    </script>
 </body>
 <!--
 Notes:
