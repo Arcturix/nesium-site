@@ -22,7 +22,8 @@
         .panel--green { background: #d6ff48; /* BRAND COLOR - Main neon accent color (change this to update brand color) */ border-radius: var(--panel-radius); }
         .panel--image { position: relative; overflow: hidden; border-radius: var(--panel-radius); padding: 0; }
         .hero-media { width: 100%; height: 100%; object-fit: cover; display: block; }
-        .panel--green, .panel--image { height: var(--hero-height); }
+        .panel--green { min-height: var(--hero-height); }
+        .panel--image { min-height: var(--hero-height); }
 
         /* Content */
         .eyebrow { letter-spacing: 0.12em; font-size: 12px; font-weight: 600; text-transform: uppercase; opacity: 0.7; margin-bottom: 20px; }
@@ -81,14 +82,39 @@
             .panel--image { padding: 0; }
             .panel--green, .panel--image { border-radius: var(--panel-radius); }
             .panel--green .eyebrow { margin-bottom: 28px; }
-            .panel--green, .panel--image { height: var(--hero-height); }
+            .panel--green { min-height: var(--hero-height); }
+            .panel--image { min-height: var(--hero-height); }
         }
 
         /* Mobile stacking: green first, then image */
         @media (max-width: 979.98px) {
             .page { padding: 16px; }
-            .panel--green { order: -1; height: var(--hero-height); }
-            .panel--image { margin-top: 16px; height: var(--hero-height); }
+            .hero { --hero-height: auto; }
+            .panel--green { order: -1; min-height: auto; }
+            .panel--image { margin-top: 16px; min-height: 50vh; }
+        }
+        
+        /* Smaller mobile devices */
+        @media (max-width: 768px) {
+            .panel { padding: 24px; }
+            .panel--green { padding: 24px; }
+            .title { margin: 12px 0 8px; }
+            .subtitle { margin: 8px 0 20px; }
+            .actions { gap: 8px; }
+            .btn { padding: 12px 18px; font-size: 14px; }
+            .social-proof { margin-top: 16px; gap: 8px; }
+            .stars { font-size: 12px; }
+        }
+        
+        /* Very small mobile devices */
+        @media (max-width: 480px) {
+            .page { padding: 12px; }
+            .panel { padding: 20px; }
+            .panel--green { padding: 20px; }
+            .panel--image { min-height: 40vh; }
+            .title { margin: 8px 0 6px; }
+            .subtitle { margin: 6px 0 16px; font-size: 14px; }
+            .btn { padding: 10px 16px; font-size: 13px; }
         }
 
         /* Footer stats */
@@ -926,7 +952,7 @@
         <section class="section" id="services">
             <div class="wrap">
                 <div class="eyebrow-center">What We Do</div>
-                <h2 class="section-title">Ten Plug-and-Play Automations With One KPI Each</h2>
+                <h2 class="section-title">Customisable Automations With One KPI Each</h2>
                 <p class="section-sub">From personalised quotes to content - each flow delivers one clear, trackable result.</p>
 
                 <div class="cards">
@@ -1489,7 +1515,7 @@
                         <div class="form-group">
                             <div class="form-checkbox">
                                 <input type="checkbox" id="consent" name="consent" required>
-                                <label for="consent">I agree to be contacted and accept the <a href="#" style="color: #0f0f0f; text-decoration: underline;">privacy notice</a>. <span class="required">*</span></label>
+                                <label for="consent">I agree to be contacted and accept the <a href="privacy.html" style="color: #0f0f0f; text-decoration: underline;">privacy notice</a>. <span class="required">*</span></label>
                             </div>
                         </div>
                     </div>
@@ -1620,7 +1646,7 @@
                                 What does pricing look like?
                             </summary>
                             <div style="margin-top: 8px; opacity: 0.9;">
-                                Fixed‑price scopes for well‑defined workflows, or monthly retainers for ongoing automation. We’ll recommend the most cost‑effective option in your plan.
+                                Automations start from £500 a month. We offer fixed‑price scopes for well‑defined workflows, or monthly retainers for ongoing automation. We'll recommend the most cost‑effective option in your plan.
                             </div>
                         </details>
                         <details class="faq-item" style="border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 16px 20px;">
@@ -1681,7 +1707,7 @@
             <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 24px;">
                 <p style="color: #888; font-size: 12px; margin: 0;">
                     © 2024 Nesium. All rights reserved. | 
-                    <a href="#" style="color: #d6ff48; text-decoration: none;">Privacy Policy</a> | 
+                    <a href="privacy.html" style="color: #d6ff48; text-decoration: none;">Privacy Policy</a> | 
                     <a href="#" style="color: #d6ff48; text-decoration: none;">Terms of Service</a>
                 </p>
             </div>
